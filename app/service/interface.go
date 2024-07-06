@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"oauth-server/app/model"
+	"workspace-server/app/model"
 )
 
 type OAuthService interface {

@@ -1,7 +1,7 @@
 package postgres_repository
 
 import (
-	"oauth-server/app/repository"
+	"workspace-server/app/repository"
 
 	"gorm.io/gorm"
 )

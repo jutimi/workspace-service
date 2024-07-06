@@ -1,8 +1,8 @@
 package entity
 
 import (
-	"oauth-server/utils"
 	"time"
+	"workspace-server/utils"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"

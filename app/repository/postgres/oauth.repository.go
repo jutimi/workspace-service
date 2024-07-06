@@ -2,9 +2,9 @@ package postgres_repository
 
 import (
 	"context"
-	"oauth-server/app/entity"
-	"oauth-server/app/repository"
 	"time"
+	"workspace-server/app/entity"
+	"workspace-server/app/repository"
 
 	"gorm.io/gorm"
 )

@@ -3,11 +3,11 @@ package logger
 import (
 	"fmt"
 	"io"
-	"oauth-server/utils"
 	"os"
 	"reflect"
 	"strings"
 	"time"
+	"workspace-server/utils"
 
 	"github.com/sirupsen/logrus"
 )

@@ -3,11 +3,11 @@ package api
 import (
 	"context"
 	"net/http"
-	"oauth-server/app/model"
-	"oauth-server/app/service"
-	_errors "oauth-server/package/errors"
-	"oauth-server/utils"
 	"time"
+	"workspace-server/app/model"
+	"workspace-server/app/service"
+	_errors "workspace-server/package/errors"
+	"workspace-server/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

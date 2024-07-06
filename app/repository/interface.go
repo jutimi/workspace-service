@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"oauth-server/app/entity"
+	"workspace-server/app/entity"
 
 	"gorm.io/gorm"
 )

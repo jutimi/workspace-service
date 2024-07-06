@@ -1,8 +1,8 @@
 package service
 
 import (
-	"oauth-server/app/helper"
-	postgres_repository "oauth-server/app/repository/postgres"
+	"workspace-server/app/helper"
+	postgres_repository "workspace-server/app/repository/postgres"
 )
 
 type ServiceCollections struct {

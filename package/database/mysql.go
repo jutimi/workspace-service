@@ -3,7 +3,7 @@ package database
 import (
 	"fmt"
 	"log"
-	"oauth-server/config"
+	"workspace-server/config"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

@@ -4,27 +4,24 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
-	"oauth-server/app/controller"
-	"oauth-server/app/helper"
-	postgres_repository "oauth-server/app/repository/postgres"
-	"oauth-server/app/service"
-	"oauth-server/config"
-	user_grpc "oauth-server/gRPC/user"
-	"oauth-server/package/database"
-	logger "oauth-server/package/log"
-	_validator "oauth-server/package/validator"
-	"oauth-server/utils"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+	"workspace-server/app/controller"
+	"workspace-server/app/helper"
+	postgres_repository "workspace-server/app/repository/postgres"
+	"workspace-server/app/service"
+	"workspace-server/config"
+	"workspace-server/package/database"
+	logger "workspace-server/package/log"
+	_validator "workspace-server/package/validator"
+	"workspace-server/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
-	"google.golang.org/grpc"
 )
 
 func main() {
@@ -38,9 +35,6 @@ func main() {
 	// Register Others
 	helpers := helper.RegisterHelpers(postgresRepo)
 	services := service.RegisterServices(helpers, postgresRepo)
-
-	// Run GRPC Server
-	go startGRPCServer(conf, postgresRepo)
 
 	// Run gin server
 	gin.SetMode(conf.Server.Mode)
@@ -103,33 +97,4 @@ func init() {
 	config.Init(configFile)
 	database.InitPostgres()
 	logger.Init()
-}
-
-func startGRPCServer(
-	conf *config.Configuration,
-
-	postgresRepo postgres_repository.PostgresRepositoryCollections,
-) {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", conf.GRPC.Port))
-	if err != nil {
-		panic(err)
-	}
-	opts := []grpc.ServerOption{}
-	grpcServer := grpc.NewServer(opts...)
-
-	// Register serever
-	user_grpc.RegisterUserRouteServer(grpcServer, user_grpc.NewUserServer(postgresRepo))
-
-	logger.Println(logger.LogPrintln{
-		FileName:  "main.go",
-		FuncName:  "main",
-		TraceData: "",
-		Msg: fmt.Sprintf(
-			"GRPC Server Running Port - %d",
-			conf.GRPC.Port,
-		),
-	})
-	if err := grpcServer.Serve(lis); err != nil {
-		panic(err)
-	}
 }

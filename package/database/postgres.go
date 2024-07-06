@@ -3,10 +3,10 @@ package database
 import (
 	"fmt"
 	"log"
-	"oauth-server/config"
-	"oauth-server/utils"
 	"os"
 	"time"
+	"workspace-server/config"
+	"workspace-server/utils"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

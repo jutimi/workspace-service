@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"oauth-server/app/controller/api"
-	"oauth-server/app/service"
+	"workspace-server/app/controller/api"
+	"workspace-server/app/service"
 
 	"github.com/gin-gonic/gin"
 )

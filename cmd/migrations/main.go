@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"oauth-server/config"
-	"oauth-server/migrations"
-	"oauth-server/package/database"
-	"oauth-server/utils"
 	"os"
 	"regexp"
 	"strings"
 	"time"
+	"workspace-server/config"
+	"workspace-server/migrations"
+	"workspace-server/package/database"
+	"workspace-server/utils"
 
 	"gorm.io/gorm"
 )

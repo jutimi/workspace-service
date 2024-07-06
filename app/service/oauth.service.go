@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"oauth-server/app/helper"
-	"oauth-server/app/model"
-	postgres_repository "oauth-server/app/repository/postgres"
+	"workspace-server/app/helper"
+	"workspace-server/app/model"
+	postgres_repository "workspace-server/app/repository/postgres"
 )
 
 type oAuthService struct {
