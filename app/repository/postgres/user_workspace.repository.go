@@ -9,94 +9,94 @@ import (
 	"gorm.io/gorm"
 )
 
-type workspaceRepository struct {
+type userWorkspaceRepository struct {
 	db *gorm.DB
 }
 
-func NewWorkspaceRepository(db *gorm.DB) repository.WorkspaceRepository {
-	return &workspaceRepository{
+func NewUserWorkspaceRepository(db *gorm.DB) repository.UserWorkspaceRepository {
+	return &userWorkspaceRepository{
 		db: db,
 	}
 }
 
-func (r *workspaceRepository) Create(
+func (r *userWorkspaceRepository) Create(
 	ctx context.Context,
 	tx *gorm.DB,
-	workspace *entity.Workspace,
+	userWorkspace *entity.UserWorkspace,
 ) error {
 	if tx != nil {
-		return tx.WithContext(ctx).Create(&workspace).Error
+		return tx.WithContext(ctx).Create(&userWorkspace).Error
 	}
 
-	return r.db.WithContext(ctx).Create(&workspace).Error
+	return r.db.WithContext(ctx).Create(&userWorkspace).Error
 }
 
-func (r *workspaceRepository) Update(
+func (r *userWorkspaceRepository) Update(
 	ctx context.Context,
 	tx *gorm.DB,
-	workspace *entity.Workspace,
+	userWorkspace *entity.UserWorkspace,
 ) error {
-	workspace.UpdatedAt = time.Now().Unix()
+	userWorkspace.BaseWorkspace.UpdatedAt = time.Now().Unix()
 
 	if tx != nil {
-		return tx.WithContext(ctx).Save(&workspace).Error
+		return tx.WithContext(ctx).Save(&userWorkspace).Error
 	}
 
-	return r.db.WithContext(ctx).Save(&workspace).Error
+	return r.db.WithContext(ctx).Save(&userWorkspace).Error
 }
 
-func (r *workspaceRepository) Delete(
+func (r *userWorkspaceRepository) Delete(
 	ctx context.Context,
 	tx *gorm.DB,
-	workspace *entity.Workspace,
+	userWorkspace *entity.UserWorkspace,
 ) error {
 	if tx != nil {
-		return tx.WithContext(ctx).Delete(&workspace).Error
+		return tx.WithContext(ctx).Delete(&userWorkspace).Error
 	}
 
-	return r.db.WithContext(ctx).Delete(&workspace).Error
+	return r.db.WithContext(ctx).Delete(&userWorkspace).Error
 }
 
-func (r *workspaceRepository) BulkCreate(
+func (r *userWorkspaceRepository) BulkCreate(
 	ctx context.Context,
 	tx *gorm.DB,
-	workspaces []entity.Workspace,
+	userWorkspaces []entity.UserWorkspace,
 ) error {
 	if tx != nil {
-		return tx.WithContext(ctx).Create(&workspaces).Error
+		return tx.WithContext(ctx).Create(&userWorkspaces).Error
 	}
 
-	return r.db.WithContext(ctx).Create(&workspaces).Error
+	return r.db.WithContext(ctx).Create(&userWorkspaces).Error
 }
 
-func (r *workspaceRepository) FindOneByFilter(
+func (r *userWorkspaceRepository) FindOneByFilter(
 	ctx context.Context,
 	tx *gorm.DB,
-	filter *repository.FindWorkspaceByFilter,
-) (*entity.Workspace, error) {
-	var data *entity.Workspace
+	filter *repository.FindUserWorkspaceByFilter,
+) (*entity.UserWorkspace, error) {
+	var data *entity.UserWorkspace
 	query := r.buildFilter(ctx, tx, filter)
 
 	err := query.First(&data).Error
 	return data, err
 }
 
-func (r *workspaceRepository) FindByFilter(
+func (r *userWorkspaceRepository) FindByFilter(
 	ctx context.Context,
 	tx *gorm.DB,
-	filer *repository.FindWorkspaceByFilter,
-) ([]entity.Workspace, error) {
-	var data []entity.Workspace
+	filer *repository.FindUserWorkspaceByFilter,
+) ([]entity.UserWorkspace, error) {
+	var data []entity.UserWorkspace
 	query := r.buildFilter(ctx, tx, filer)
 
 	err := query.Find(&data).Error
 	return data, err
 }
 
-func (r *workspaceRepository) buildFilter(
+func (r *userWorkspaceRepository) buildFilter(
 	ctx context.Context,
 	tx *gorm.DB,
-	filter *repository.FindWorkspaceByFilter,
+	filter *repository.FindUserWorkspaceByFilter,
 ) *gorm.DB {
 	query := r.db.WithContext(ctx)
 	if tx != nil {

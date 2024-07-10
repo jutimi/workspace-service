@@ -20,7 +20,7 @@ type UserWorkspace struct {
 	Email       *string   `json:"email" gorm:"type:varchar(100);"`
 	Role        string    `json:"role" gorm:"type:enum('admin','user', 'owner');"`
 	IsActive    bool      `json:"is_active" gorm:"default:true;type:bool;not null"`
-	BaseWorkspaceEntity
+	BaseWorkspace
 
 	// Relation
 	Workspace           Workspace           `gorm:"foreignKey:workspace_id;references:id"`
@@ -29,7 +29,7 @@ type UserWorkspace struct {
 
 func NewUserWorkspace() *UserWorkspace {
 	return &UserWorkspace{
-		BaseWorkspaceEntity: BaseWorkspaceEntity{
+		BaseWorkspace: BaseWorkspace{
 			CreatedAt: time.Now().Unix(),
 			UpdatedAt: time.Now().Unix(),
 		},

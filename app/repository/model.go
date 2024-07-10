@@ -1,5 +1,28 @@
 package repository
 
-type FindWorkspaceByFilter struct{}
+import "github.com/google/uuid"
 
-type FindUserWorkspaceByFilter struct{}
+type FindWorkspaceByFilter struct {
+	ID           *uuid.UUID
+	IsActive     *bool
+	Email        *string
+	PhoneNumber  *string
+	IDs          []uuid.UUID
+	Emails       []string
+	PhoneNumbers []string
+	Limit        *int
+	Offset       *int
+}
+
+type FindUserWorkspaceByFilter struct {
+	ID           *uuid.UUID
+	WorkspaceID  *uuid.UUID
+	IsActive     *bool
+	Email        *string
+	PhoneNumber  *string
+	IDs          []uuid.UUID
+	Emails       []string
+	PhoneNumbers []string
+	Limit        *int
+	Offset       *int
+}

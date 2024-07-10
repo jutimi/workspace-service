@@ -21,3 +21,8 @@ func ConvertToCamelCase(str string) string {
 	result := strings.Join(parts, "")
 	return result
 }
+
+func ConvertToSnakeCase(str string) string {
+	str = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(str, "_")
+	return strings.ToLower(str)
+}

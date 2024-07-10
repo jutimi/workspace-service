@@ -2,6 +2,7 @@ package entity
 
 import (
 	"time"
+	"workspace-server/utils"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -10,6 +11,8 @@ import (
 type Workspace struct {
 	gorm.Model
 	ID          uuid.UUID `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	Name        string    `json:"name" gorm:"type:varchar(100);not null"`
+	NameSlug    string    `json:"name_slug" gorm:"type:varchar(100);not null"`
 	PhoneNumber *string   `json:"phone_number" gorm:"type:varchar(20);"`
 	Address     *string   `json:"address" gorm:"type:text;"`
 	Email       *string   `json:"email" gorm:"type:varchar(100);"`
@@ -27,4 +30,12 @@ func NewWorkspace() *Workspace {
 
 func (e *Workspace) TableName() string {
 	return "workspaces"
+}
+
+func (e *Workspace) BeforeSave(tx *gorm.DB) error {
+	if e.Name != "" {
+		e.NameSlug = utils.ConvertToSnakeCase(e.Name)
+	}
+
+	return nil
 }
