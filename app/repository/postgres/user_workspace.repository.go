@@ -127,3 +127,24 @@ func (r *userWorkspaceRepository) buildFilter(
 
 	return query
 }
+
+func (r *userWorkspaceRepository) buildRelationFilter(ctx context.Context,
+	tx *gorm.DB,
+	filter *repository.FindUserWorkspaceByFilter,
+) *gorm.DB {
+	query := r.db.WithContext(ctx)
+	if tx != nil {
+		query = tx.WithContext(ctx)
+	}
+
+	//
+	if filter.Name != nil {
+		filter.IsIncludeDetail = true
+	}
+
+	//
+	if filter.IsIncludeDetail {
+	}
+
+	return query
+}

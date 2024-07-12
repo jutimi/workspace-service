@@ -34,7 +34,7 @@ func (e *UserWorkspaceDetail) TableName() string {
 
 func (e *UserWorkspaceDetail) BeforeSave(tx *gorm.DB) error {
 	if e.FullName != "" {
-		e.NameSlug = utils.ConvertToSnakeCase(e.FullName)
+		e.NameSlug = utils.Slugify(e.FullName)
 	}
 
 	return nil

@@ -12,6 +12,7 @@ type FindWorkspaceByFilter struct {
 	PhoneNumbers []string
 	Limit        *int
 	Offset       *int
+	Name         *string
 }
 
 type FindUserWorkspaceByFilter struct {
@@ -25,4 +26,8 @@ type FindUserWorkspaceByFilter struct {
 	PhoneNumbers []string
 	Limit        *int
 	Offset       *int
+	Name         *string
+
+	// Include option
+	IsIncludeDetail bool
 }
