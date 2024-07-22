@@ -6,7 +6,7 @@ import (
 )
 
 type ServiceCollections struct {
-	OAuthSvc OAuthService
+	WorkspaceSvc WorkspaceService
 }
 
 func RegisterServices(
@@ -14,9 +14,7 @@ func RegisterServices(
 
 	postgresRepo postgres_repository.PostgresRepositoryCollections,
 ) ServiceCollections {
-	oauthSvc := NewOAuthService(helpers, postgresRepo)
-
 	return ServiceCollections{
-		OAuthSvc: oauthSvc,
+		WorkspaceSvc: NewWorkspaceService(helpers, postgresRepo),
 	}
 }

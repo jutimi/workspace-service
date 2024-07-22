@@ -13,21 +13,21 @@ import (
 	"github.com/gin-gonic/gin/binding"
 )
 
-type oAuthHandler struct {
+type workspaceHandler struct {
 	services service.ServiceCollections
 }
 
-func NewApiOAuthController(router *gin.Engine, services service.ServiceCollections) {
-	handler := oAuthHandler{services}
+func NewApiWorkspaceController(router *gin.Engine, services service.ServiceCollections) {
+	handler := workspaceHandler{services}
 
-	group := router.Group("api/v1/oauth")
+	group := router.Group("api/v1/workspaces")
 	{
-		group.POST("/refresh", handler.refreshToken)
+		group.POST("/create", handler.createWorkspace)
 	}
 }
 
-func (h *oAuthHandler) refreshToken(c *gin.Context) {
-	var data model.RefreshTokenRequest
+func (h *workspaceHandler) createWorkspace(c *gin.Context) {
+	var data model.CreateWorkspaceRequest
 	if err := c.ShouldBindBodyWith(&data, binding.JSON); err != nil {
 		resErr := _errors.NewValidatorError(err)
 		c.JSON(http.StatusBadRequest, utils.FormatErrorResponse(resErr))
@@ -38,7 +38,7 @@ func (h *oAuthHandler) refreshToken(c *gin.Context) {
 	defer cancel()
 	ctx = context.WithValue(ctx, utils.GIN_CONTEXT_KEY, c)
 
-	res, err := h.services.OAuthSvc.RefreshToken(ctx, &data)
+	res, err := h.services.WorkspaceSvc.CreateWorkspace(ctx, &data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.FormatErrorResponse(err))
 		return

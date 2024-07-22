@@ -7,21 +7,31 @@ import (
 	postgres_repository "workspace-server/app/repository/postgres"
 )
 
-type oAuthService struct {
+type workspaceService struct {
 	helpers      helper.HelperCollections
 	postgresRepo postgres_repository.PostgresRepositoryCollections
 }
 
-func NewOAuthService(
+func NewWorkspaceService(
 	helpers helper.HelperCollections,
 	postgresRepo postgres_repository.PostgresRepositoryCollections,
-) OAuthService {
-	return &oAuthService{
+) WorkspaceService {
+	return &workspaceService{
 		helpers:      helpers,
 		postgresRepo: postgresRepo,
 	}
 }
 
-func (s *oAuthService) RefreshToken(ctx context.Context, data *model.RefreshTokenRequest) (*model.RefreshTokenResponse, error) {
+func (s *workspaceService) CreateWorkspace(
+	ctx context.Context,
+	data *model.CreateWorkspaceRequest,
+) (*model.CreateWorkspaceResponse, error) {
+	return nil, nil
+}
+
+func (s *workspaceService) UpdateWorkspace(
+	ctx context.Context,
+	data *model.UpdateWorkspaceRequest,
+) (*model.UpdateWorkspaceResponse, error) {
 	return nil, nil
 }

@@ -5,6 +5,7 @@ import (
 	"workspace-server/app/model"
 )
 
-type OAuthService interface {
-	RefreshToken(ctx context.Context, data *model.RefreshTokenRequest) (*model.RefreshTokenResponse, error)
+type WorkspaceService interface {
+	CreateWorkspace(ctx context.Context, data *model.CreateWorkspaceRequest) (*model.CreateWorkspaceResponse, error)
+	UpdateWorkspace(ctx context.Context, data *model.UpdateWorkspaceRequest) (*model.UpdateWorkspaceResponse, error)
 }

@@ -13,9 +13,9 @@ type Workspace struct {
 	ID          uuid.UUID `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	Name        string    `json:"name" gorm:"type:varchar(100);not null"`
 	NameSlug    string    `json:"name_slug" gorm:"type:varchar(100);not null"`
-	PhoneNumber *string   `json:"phone_number" gorm:"type:varchar(20);"`
+	PhoneNumber string    `json:"phone_number" gorm:"type:varchar(20);unique;not null"`
 	Address     *string   `json:"address" gorm:"type:text;"`
-	Email       *string   `json:"email" gorm:"type:varchar(100);"`
+	Email       string    `json:"email" gorm:"type:varchar(100);unique;not null"`
 	IsActive    bool      `json:"is_active" gorm:"default:true;type:bool;not null"`
 	CreatedAt   int64     `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt   int64     `json:"updated_at" gorm:"autoUpdateTime:milli"`
