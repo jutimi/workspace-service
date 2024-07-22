@@ -3,6 +3,9 @@ package utils
 import (
 	"regexp"
 	"strings"
+
+	"github.com/gosimple/slug"
+	"github.com/gosimple/unidecode"
 )
 
 func ConvertToUpperCase(str string) string {
@@ -25,4 +28,9 @@ func ConvertToCamelCase(str string) string {
 func ConvertToSnakeCase(str string) string {
 	str = regexp.MustCompile(`[^a-zA-Z0-9 ]+`).ReplaceAllString(str, "_")
 	return strings.ToLower(str)
+}
+
+func Slugify(str string) string {
+	decodeStr := unidecode.Unidecode(str)
+	return slug.MakeLang(decodeStr, "vi")
 }

@@ -124,6 +124,9 @@ func (r *workspaceRepository) buildFilter(
 	if filter.Limit != nil && filter.Offset != nil {
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
 	}
+	if filter.Name != nil {
+		query = query.Scopes(findByName(*filter.Name, "name_slug"))
+	}
 
 	return query
 }
