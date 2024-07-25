@@ -93,6 +93,27 @@ func (r *workspaceRepository) FindByFilter(
 	return data, err
 }
 
+func (r *workspaceRepository) CountByFilter(
+	ctx context.Context,
+	tx *gorm.DB,
+	filter *repository.FindWorkspaceByFilter,
+) (int64, error) {
+	var count int64
+	query := r.buildFilter(ctx, tx, filter)
+
+	err := query.Count(&count).Error
+	return count, err
+}
+
+func (r *workspaceRepository) FindExistedWorkspaceByFilter(
+	ctx context.Context,
+	tx *gorm.DB,
+	filter *repository.FindWorkspaceByFilter,
+) (*entity.Workspace, error) {
+	return nil, nil
+}
+
+// ------------------------------------------------------------------------------
 func (r *workspaceRepository) buildFilter(
 	ctx context.Context,
 	tx *gorm.DB,

@@ -26,7 +26,6 @@ func (s *workspaceService) CreateWorkspace(
 	ctx context.Context,
 	data *model.CreateWorkspaceRequest,
 ) (*model.CreateWorkspaceResponse, error) {
-
 	return nil, nil
 }
 
