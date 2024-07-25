@@ -24,11 +24,9 @@ const (
 	ErrCodeValidatorFormat       = 2
 	ErrCodeValidatorVerifiedData = 3
 
-	ErrCodeUserNotFound = 10
-	ErrCodeUserExisted  = 11
+	ErrCodeWorkspaceNotFound = 100
 
-	ErrCodeTokenExpired      = 20
-	ErrCodeIncorrectPassword = 21
+	ErrCodeUserWorkspaceNotFound = 110
 
 	ErrCodeInternalServerError = 500
 	ErrCodeTimeout             = 408
@@ -61,20 +59,14 @@ var messages = map[int]map[string]string{
 		LangVN: "Bạn không có quyền truy cập tài nguyên này. Vui lòng kiểm tra lại quyền",
 	},
 
-	// User Error
-	ErrCodeUserNotFound: {
-		LangVN: "Không tìm thấy người dùng. Vui lòng kiểm tra lại",
-	},
-	ErrCodeUserExisted: {
-		LangVN: "Người dùng đã đăng ký tài khoản. Vui lòng kiểm tra lại",
+	// Workspace Error
+	ErrCodeWorkspaceNotFound: {
+		LangVN: "Không tìm thấy công ty. Vui lòng kiểm tra lại",
 	},
 
-	// OAuth Error
-	ErrCodeTokenExpired: {
-		LangVN: "Phiên làm việc đã hết hạn. Vui lòng đăng nhâp lại",
-	},
-	ErrCodeIncorrectPassword: {
-		LangVN: "Tên đăng nhập hoặc mật khẩu không đúng. Vui lòng kiểm tra lại",
+	// User Workspace Error
+	ErrCodeUserWorkspaceNotFound: {
+		LangVN: "Không tìm thấy nhân viên. Vui không kiểm tra lại",
 	},
 }
 

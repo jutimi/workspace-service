@@ -17,11 +17,14 @@ type FindWorkspaceByFilter struct {
 
 type FindUserWorkspaceByFilter struct {
 	ID           *uuid.UUID
+	IDs          []uuid.UUID
 	WorkspaceID  *uuid.UUID
+	WorkspaceIDs []uuid.UUID
+	UserID       *uuid.UUID
+	UserIDs      []uuid.UUID
 	IsActive     *bool
 	Email        *string
 	PhoneNumber  *string
-	IDs          []uuid.UUID
 	Emails       []string
 	PhoneNumbers []string
 	Limit        *int
@@ -29,5 +32,8 @@ type FindUserWorkspaceByFilter struct {
 	Name         *string
 
 	// Include option
-	IsIncludeDetail bool
+	IsIncludeDetail bool // Left join user workspace detail
+
+	// Require option
+	IsRequireDetail bool // Inner join user workspace detail
 }

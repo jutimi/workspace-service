@@ -20,6 +20,7 @@ type UserWorkspace struct {
 	Email       *string   `json:"email" gorm:"type:varchar(100);"`
 	Role        string    `json:"role" gorm:"type:enum('admin','user', 'owner');"`
 	IsActive    bool      `json:"is_active" gorm:"default:true;type:bool;not null"`
+	UserID      uuid.UUID `json:"user_id" gorm:"type:uuid;not null"`
 	BaseWorkspace
 
 	// Relation

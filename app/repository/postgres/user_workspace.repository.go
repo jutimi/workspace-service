@@ -71,11 +71,10 @@ func (r *userWorkspaceRepository) BulkCreate(
 
 func (r *userWorkspaceRepository) FindOneByFilter(
 	ctx context.Context,
-	tx *gorm.DB,
 	filter *repository.FindUserWorkspaceByFilter,
 ) (*entity.UserWorkspace, error) {
 	var data *entity.UserWorkspace
-	query := r.buildFilter(ctx, tx, filter)
+	query := r.buildFilter(ctx, nil, filter)
 
 	err := query.First(&data).Error
 	return data, err
@@ -83,11 +82,10 @@ func (r *userWorkspaceRepository) FindOneByFilter(
 
 func (r *userWorkspaceRepository) FindByFilter(
 	ctx context.Context,
-	tx *gorm.DB,
 	filer *repository.FindUserWorkspaceByFilter,
 ) ([]entity.UserWorkspace, error) {
 	var data []entity.UserWorkspace
-	query := r.buildFilter(ctx, tx, filer)
+	query := r.buildFilter(ctx, nil, filer)
 
 	err := query.Find(&data).Error
 	return data, err
@@ -127,7 +125,9 @@ func (r *userWorkspaceRepository) buildFilter(
 
 	// Relation query
 	if filter.IsIncludeDetail {
-		query = query.InnerJoins("UserWorkspaceDetail", func(db *gorm.DB) *gorm.DB {
+		query = query.Preload("UserWorkspaceDetail")
+	} else if filter.IsRequireDetail {
+		query = query.InnerJoins("UserWorkspaceUser", func(db *gorm.DB) *gorm.DB {
 			return r.buildRelationFilter(db, filter)
 		})
 	}
@@ -143,7 +143,6 @@ func (r *userWorkspaceRepository) buildRelationFilter(
 
 	//
 	if filter.Name != nil {
-		filter.IsIncludeDetail = true
 		query.Scopes(findByName(*filter.Name, "full_name_slug"))
 	}
 
