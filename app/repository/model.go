@@ -30,10 +30,20 @@ type FindUserWorkspaceByFilter struct {
 	Limit        *int
 	Offset       *int
 	Name         *string
+	Role         *string
 
 	// Include option
 	IsIncludeDetail bool // Left join user workspace detail
 
 	// Require option
 	IsRequireDetail bool // Inner join user workspace detail
+}
+
+type FindOrganizationByFilter struct {
+	ID                   *uuid.UUID
+	IDs                  []uuid.UUID
+	ParentOrganizationID *uuid.UUID
+	Name                 *string
+	Limit                *int
+	Offset               *int
 }

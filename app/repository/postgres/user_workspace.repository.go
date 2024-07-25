@@ -82,13 +82,24 @@ func (r *userWorkspaceRepository) FindOneByFilter(
 
 func (r *userWorkspaceRepository) FindByFilter(
 	ctx context.Context,
-	filer *repository.FindUserWorkspaceByFilter,
+	filter *repository.FindUserWorkspaceByFilter,
 ) ([]entity.UserWorkspace, error) {
 	var data []entity.UserWorkspace
-	query := r.buildFilter(ctx, nil, filer)
+	query := r.buildFilter(ctx, nil, filter)
 
 	err := query.Find(&data).Error
 	return data, err
+}
+
+func (r *userWorkspaceRepository) CountByFilter(
+	ctx context.Context,
+	filter *repository.FindUserWorkspaceByFilter,
+) (int64, error) {
+	var count int64
+	query := r.buildFilter(ctx, nil, filter)
+
+	err := query.Count(&count).Error
+	return count, err
 }
 
 func (r *userWorkspaceRepository) buildFilter(
@@ -108,7 +119,7 @@ func (r *userWorkspaceRepository) buildFilter(
 		query = query.Scopes(findByText(*filter.PhoneNumber, "phone_number"))
 	}
 	if filter.ID != nil {
-		query = query.Scopes(findById(*filter.ID, "id"))
+		query = query.Scopes(findByString(*filter.ID, "id"))
 	}
 	if filter.IDs != nil && len(filter.IDs) > 0 {
 		query = query.Scopes(findBySlice(filter.IDs, "id"))
@@ -121,6 +132,9 @@ func (r *userWorkspaceRepository) buildFilter(
 	}
 	if filter.Limit != nil && filter.Offset != nil {
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
+	}
+	if filter.Role != nil {
+		query = query.Scopes(findByString(*filter.Email, "email"))
 	}
 
 	// Relation query

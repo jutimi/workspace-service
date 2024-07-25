@@ -9,9 +9,9 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func findById(id uuid.UUID, field string) func(db *gorm.DB) *gorm.DB {
+func findByString[T uuid.UUID | string | int](str T, field string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		return db.Where(fmt.Sprintf("%s = ?", field), id)
+		return db.Where(fmt.Sprintf("%s = ?", field), str)
 	}
 }
 
@@ -41,9 +41,9 @@ func findByName(name, field string) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func orById(id uuid.UUID, field string) func(db *gorm.DB) *gorm.DB {
+func orByString[T uuid.UUID | string | int](str T, field string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		return db.Or(fmt.Sprintf("%s = ?", field), id)
+		return db.Or(fmt.Sprintf("%s = ?", field), str)
 	}
 }
 
@@ -56,6 +56,13 @@ func orBySlice[T []uuid.UUID | []string | []int](data T, field string) func(db *
 func orByText(text, field string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		searchText := "%" + text + "%"
+		return db.Or(fmt.Sprintf("%s LIKE ?", field), searchText)
+	}
+}
+
+func orByName(name, field string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		searchText := "%" + utils.Slugify(name) + "%"
 		return db.Or(fmt.Sprintf("%s LIKE ?", field), searchText)
 	}
 }

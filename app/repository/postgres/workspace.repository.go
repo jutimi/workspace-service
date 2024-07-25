@@ -5,6 +5,7 @@ import (
 	"time"
 	"workspace-server/app/entity"
 	"workspace-server/app/repository"
+	"workspace-server/utils"
 
 	"gorm.io/gorm"
 )
@@ -82,10 +83,10 @@ func (r *workspaceRepository) FindOneByFilter(
 
 func (r *workspaceRepository) FindByFilter(
 	ctx context.Context,
-	filer *repository.FindWorkspaceByFilter,
+	filter *repository.FindWorkspaceByFilter,
 ) ([]entity.Workspace, error) {
 	var data []entity.Workspace
-	query := r.buildFilter(ctx, nil, filer)
+	query := r.buildFilter(ctx, nil, filter)
 
 	err := query.Find(&data).Error
 	return data, err
@@ -102,11 +103,26 @@ func (r *workspaceRepository) CountByFilter(
 	return count, err
 }
 
-func (r *workspaceRepository) FindExistedWorkspaceByFilter(
+func (r *workspaceRepository) FindExistedByFilter(
 	ctx context.Context,
 	filter *repository.FindWorkspaceByFilter,
-) (*entity.Workspace, error) {
-	return nil, nil
+) ([]entity.Workspace, error) {
+	var data []entity.Workspace
+	query := r.buildExistedFilter(ctx, nil, filter)
+
+	err := query.Find(&data).Error
+	return data, err
+}
+
+func (r *workspaceRepository) FindDuplicateWS(ctx context.Context, name string) ([]entity.Workspace, error) {
+	var data []entity.Workspace
+	nameSlug := utils.Slugify(name)
+
+	query := r.db.WithContext(ctx).Where("name_slug = ?", nameSlug).Find(&data)
+	if query.Error != nil {
+		return nil, query.Error
+	}
+	return data, nil
 }
 
 // ------------------------------------------------------------------------------
@@ -127,7 +143,7 @@ func (r *workspaceRepository) buildFilter(
 		query = query.Scopes(findByText(*filter.PhoneNumber, "phone_number"))
 	}
 	if filter.ID != nil {
-		query = query.Scopes(findById(*filter.ID, "id"))
+		query = query.Scopes(findByString(*filter.ID, "id"))
 	}
 	if filter.IDs != nil && len(filter.IDs) > 0 {
 		query = query.Scopes(findBySlice(filter.IDs, "id"))
@@ -143,6 +159,44 @@ func (r *workspaceRepository) buildFilter(
 	}
 	if filter.Name != nil {
 		query = query.Scopes(findByName(*filter.Name, "name_slug"))
+	}
+
+	return query
+}
+
+func (r *workspaceRepository) buildExistedFilter(
+	ctx context.Context,
+	tx *gorm.DB,
+	filter *repository.FindWorkspaceByFilter,
+) *gorm.DB {
+	query := r.db.WithContext(ctx)
+	if tx != nil {
+		query = tx.WithContext(ctx)
+	}
+
+	if filter.Email != nil && *filter.Email != "" {
+		query = query.Scopes(orByText(*filter.Email, "email"))
+	}
+	if filter.PhoneNumber != nil && *filter.PhoneNumber != "" {
+		query = query.Scopes(orByText(*filter.PhoneNumber, "phone_number"))
+	}
+	if filter.ID != nil {
+		query = query.Scopes(orByString(*filter.ID, "id"))
+	}
+	if filter.IDs != nil && len(filter.IDs) > 0 {
+		query = query.Scopes(orBySlice(filter.IDs, "id"))
+	}
+	if filter.Emails != nil && len(filter.Emails) > 0 {
+		query = query.Scopes(orBySlice(filter.Emails, "email"))
+	}
+	if filter.PhoneNumbers != nil && len(filter.PhoneNumbers) > 0 {
+		query = query.Scopes(orBySlice(filter.PhoneNumbers, "phone_number"))
+	}
+	if filter.Limit != nil && filter.Offset != nil {
+		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
+	}
+	if filter.Name != nil {
+		query = query.Scopes(orByName(*filter.Name, "name_slug"))
 	}
 
 	return query

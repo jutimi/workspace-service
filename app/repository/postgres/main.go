@@ -7,15 +7,19 @@ import (
 )
 
 type PostgresRepositoryCollections struct {
-	WorkspaceRepo           repository.WorkspaceRepository
-	UserWorkspaceRepo       repository.UserWorkspaceRepository
-	UserWorkspaceDetailRepo repository.UserWorkspaceDetailRepository
+	WorkspaceRepo                 repository.WorkspaceRepository
+	UserWorkspaceRepo             repository.UserWorkspaceRepository
+	UserWorkspaceDetailRepo       repository.UserWorkspaceDetailRepository
+	OrganizationRepo              repository.OrganizationRepository
+	UserWorkspaceOrganizationRepo repository.UserWorkspaceOrganizationRepository
 }
 
 func RegisterPostgresRepositories(db *gorm.DB) PostgresRepositoryCollections {
 	return PostgresRepositoryCollections{
-		WorkspaceRepo:           NewWorkspaceRepository(db),
-		UserWorkspaceRepo:       NewUserWorkspaceRepository(db),
-		UserWorkspaceDetailRepo: NewUserWorkspaceDetailRepository(db),
+		WorkspaceRepo:                 NewWorkspaceRepository(db),
+		UserWorkspaceRepo:             NewUserWorkspaceRepository(db),
+		UserWorkspaceDetailRepo:       NewUserWorkspaceDetailRepository(db),
+		OrganizationRepo:              NewOrganizationRepository(db),
+		UserWorkspaceOrganizationRepo: NewUserWorkspaceOrganizationRepository(db),
 	}
 }

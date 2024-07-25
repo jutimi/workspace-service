@@ -24,7 +24,8 @@ const (
 	ErrCodeValidatorFormat       = 2
 	ErrCodeValidatorVerifiedData = 3
 
-	ErrCodeWorkspaceNotFound = 100
+	ErrCodeWorkspaceNotFound    = 100
+	ErrCodePassedLimitWorkspace = 101
 
 	ErrCodeUserWorkspaceNotFound = 110
 
@@ -61,7 +62,10 @@ var messages = map[int]map[string]string{
 
 	// Workspace Error
 	ErrCodeWorkspaceNotFound: {
-		LangVN: "Không tìm thấy công ty. Vui lòng kiểm tra lại",
+		LangVN: "Không tìm thấy workspace. Vui lòng kiểm tra lại",
+	},
+	ErrCodePassedLimitWorkspace: {
+		LangVN: "Bạn đã sở hữu quá số workspace cho phép. Vui lòng liên hệ quản trị viên",
 	},
 
 	// User Workspace Error
