@@ -20,14 +20,14 @@ type oAuthHandler struct {
 func NewApiOAuthController(router *gin.Engine, services service.ServiceCollections) {
 	handler := oAuthHandler{services}
 
-	group := router.Group("api/v1/oauth")
+	group := router.Group("api/v1/workspace")
 	{
-		group.POST("/refresh", handler.refreshToken)
+		group.POST("/create", handler.refreshToken)
 	}
 }
 
 func (h *oAuthHandler) refreshToken(c *gin.Context) {
-	var data model.RefreshTokenRequest
+	var data model.CreateWorkspaceRequest
 	if err := c.ShouldBindBodyWith(&data, binding.JSON); err != nil {
 		resErr := _errors.NewValidatorError(err)
 		c.JSON(http.StatusBadRequest, utils.FormatErrorResponse(resErr))
@@ -38,7 +38,7 @@ func (h *oAuthHandler) refreshToken(c *gin.Context) {
 	defer cancel()
 	ctx = context.WithValue(ctx, utils.GIN_CONTEXT_KEY, c)
 
-	res, err := h.services.OAuthSvc.RefreshToken(ctx, &data)
+	res, err := h.services.WorkspaceSvc.CreateWorkspace(ctx, &data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.FormatErrorResponse(err))
 		return

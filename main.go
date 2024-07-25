@@ -11,6 +11,7 @@ import (
 	"time"
 	"workspace-server/app/controller"
 	"workspace-server/app/helper"
+	other_repository "workspace-server/app/repository/other"
 	postgres_repository "workspace-server/app/repository/postgres"
 	"workspace-server/app/service"
 	"workspace-server/config"
@@ -31,10 +32,11 @@ func main() {
 	postgresDB := database.GetPostgres()
 	// mysqlRepo := mysql_repository.RegisterMysqlRepositories(db)
 	postgresRepo := postgres_repository.RegisterPostgresRepositories(postgresDB)
+	repo := other_repository.RegisterOtherRepositories()
 
 	// Register Others
-	helpers := helper.RegisterHelpers(postgresRepo)
-	services := service.RegisterServices(helpers, postgresRepo)
+	helpers := helper.RegisterHelpers(postgresRepo, repo)
+	services := service.RegisterServices(helpers, postgresRepo, repo)
 
 	// Run gin server
 	gin.SetMode(conf.Server.Mode)

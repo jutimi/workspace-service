@@ -5,6 +5,15 @@ import (
 	"workspace-server/app/model"
 )
 
-type OAuthService interface {
-	RefreshToken(ctx context.Context, data *model.RefreshTokenRequest) (*model.RefreshTokenResponse, error)
+type WorkspaceService interface {
+	CreateWorkspace(ctx context.Context, data *model.CreateWorkspaceRequest) (*model.CreateWorkspaceResponse, error)
+	UpdateWorkspace(ctx context.Context, data *model.UpdateWorkspaceRequest) (*model.UpdateWorkspaceResponse, error)
+	InactiveWorkspace(ctx context.Context, data *model.InactiveWorkspaceRequest) (*model.InactiveWorkspaceResponse, error)
+}
+
+type UserWorkspaceService interface {
+	CreateUserWorkspace(ctx context.Context, data *model.CreateUserWorkspaceRequest) (*model.CreateUserWorkspaceResponse, error)
+	UpdateUserWorkspace(ctx context.Context, data *model.UpdateUserWorkspaceRequest) (*model.UpdateUserWorkspaceResponse, error)
+	InactiveUserWorkspace(ctx context.Context, data *model.InactiveUserWorkspaceRequest) (*model.InactiveUserWorkspaceResponse, error)
+	RemoveUserWorkspace(ctx context.Context, data *model.RemoveUserWorkspaceRequest) (*model.RemoveUserWorkspaceResponse, error)
 }

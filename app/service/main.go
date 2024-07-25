@@ -2,21 +2,21 @@ package service
 
 import (
 	"workspace-server/app/helper"
+	other_repository "workspace-server/app/repository/other"
 	postgres_repository "workspace-server/app/repository/postgres"
 )
 
 type ServiceCollections struct {
-	OAuthSvc OAuthService
+	WorkspaceSvc WorkspaceService
 }
 
 func RegisterServices(
 	helpers helper.HelperCollections,
 
 	postgresRepo postgres_repository.PostgresRepositoryCollections,
+	otherRepo other_repository.OtherRepositoryCollections,
 ) ServiceCollections {
-	oauthSvc := NewOAuthService(helpers, postgresRepo)
-
 	return ServiceCollections{
-		OAuthSvc: oauthSvc,
+		WorkspaceSvc: NewWorkspaceService(helpers, postgresRepo),
 	}
 }
