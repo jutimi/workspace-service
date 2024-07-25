@@ -10,13 +10,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type userMiddleware struct {
+type workspaceMiddleware struct {
 }
 
-func NewUserMiddleware() Middleware {
-	return &userMiddleware{}
+func NewWorkspaceMiddleware() Middleware {
+	return &workspaceMiddleware{}
 }
-func (m *userMiddleware) Handler() gin.HandlerFunc {
+func (m *workspaceMiddleware) Handler() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		resErr := errors.New(errors.ErrCodeUnauthorized)
 
@@ -35,13 +35,13 @@ func (m *userMiddleware) Handler() gin.HandlerFunc {
 			return
 		}
 
-		payload, err := utils.ParseUserToken(tokenArr[1])
+		payload, err := utils.ParseWSToken(tokenArr[1])
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, utils.FormatErrorResponse(resErr))
 			return
 		}
 
-		c.Set(string(utils.USER_CONTEXT_KEY), payload)
+		c.Set(string(utils.WORKSPACE_CONTEXT_KEY), payload)
 
 		c.Next()
 	}

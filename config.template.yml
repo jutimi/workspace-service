@@ -1,0 +1,22 @@
+mysql:
+  host: ${MYSQL_HOST}
+  port: ${MYSQL_PORT}
+  user: ${MYSQL_USER}
+  password: ${MYSQL_PASSWORD}
+  database: ${MYSQL_DATABASE}
+
+postgres:
+  host: ${POSTGRES_HOST}
+  port: ${POSTGRES_PORT}
+  user: ${POSTGRES_USER}
+  password: ${POSTGRES_PASSWORD}
+  database: ${POSTGRES_DATABASE}
+
+server:
+  port: ${SERVER_PORT}
+  mode: ${SERVER_MODE}
+  sentry_url: ${SENTRY_URL}
+
+grpc:
+  oauth_port: ${GRPC_OAUTH_PORT}
+  workspace_port: ${GRPC_WORKSPACE_PORT}

@@ -17,7 +17,7 @@ require (
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
-	github.com/jutimi/grpc-service v0.0.0-20240725035231-94e9984008dc // indirect
+	github.com/jutimi/grpc-service v0.0.0-20240725112615-753c0069025b // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240528184218-531527333157 // indirect

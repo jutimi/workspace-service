@@ -76,50 +76,6 @@ func (s *grpcServer) GetWorkspaceById(ctx context.Context, data *common.GetByIdP
 	}, nil
 }
 
-func (s *grpcServer) GetUserWorkspaceById(ctx context.Context, data *common.GetByIdParams) (*workspace.UserWorkspaceResponse, error) {
-	id, err := utils.ConvertStringToUUID(data.Id)
-	if err != nil {
-		customErr := errors.New(errors.ErrCodeInternalServerError)
-		return &workspace.UserWorkspaceResponse{
-			Success: false,
-			Data:    nil,
-			Error: grpc_utils.FormatErrorResponse(
-				int32(customErr.GetCode()),
-				customErr.Error(),
-			),
-		}, nil
-	}
-
-	userWs, err := s.postgresRepo.UserWorkspaceRepo.FindOneByFilter(ctx, &repository.FindUserWorkspaceByFilter{
-		ID: &id,
-	})
-	if err != nil {
-		customErr := errors.New(errors.ErrCodeUserWorkspaceNotFound)
-		return &workspace.UserWorkspaceResponse{
-			Success: false,
-			Data:    nil,
-			Error: grpc_utils.FormatErrorResponse(
-				int32(customErr.GetCode()),
-				customErr.Error(),
-			),
-		}, nil
-	}
-
-	return &workspace.UserWorkspaceResponse{
-		Success: true,
-		Data: &workspace.UserWorkspaceDetail{
-			Id:          userWs.ID.String(),
-			Name:        userWs.UserWorkspaceDetail.Name,
-			Email:       *userWs.Email,
-			PhoneNumber: *userWs.PhoneNumber,
-			IsActive:    userWs.IsActive,
-			Role:        userWs.Role,
-			WorkspaceId: userWs.WorkspaceID.String(),
-			UserId:      userWs.UserID.String(),
-		},
-		Error: nil,
-	}, nil
-}
 func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *workspace.GetUserWorkspaceByFilterParams) (*workspace.UserWorkspaceResponse, error) {
 	filter, err := convertUserParamsToFilter(data)
 	if err != nil {
@@ -164,7 +120,52 @@ func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *workspa
 }
 
 func (s *grpcServer) GetUserWorkspacesByFilter(ctx context.Context, data *workspace.GetUserWorkspaceByFilterParams) (*workspace.UserWorkspacesResponse, error) {
+	var userWSRes []*workspace.UserWorkspaceDetail
 
+	filter, err := convertUserParamsToFilter(data)
+	if err != nil {
+		customErr := errors.New(errors.ErrCodeInternalServerError)
+		return &workspace.UserWorkspacesResponse{
+			Success: false,
+			Data:    nil,
+			Error: grpc_utils.FormatErrorResponse(
+				int32(customErr.GetCode()),
+				customErr.Error(),
+			),
+		}, nil
+	}
+
+	userWs, err := s.postgresRepo.UserWorkspaceRepo.FindByFilter(ctx, filter)
+	if err != nil {
+		customErr := errors.New(errors.ErrCodeUserWorkspaceNotFound)
+		return &workspace.UserWorkspacesResponse{
+			Success: false,
+			Data:    nil,
+			Error: grpc_utils.FormatErrorResponse(
+				int32(customErr.GetCode()),
+				customErr.Error(),
+			),
+		}, nil
+	}
+
+	for _, user := range userWs {
+		userWSRes = append(userWSRes, &workspace.UserWorkspaceDetail{
+			Id:          user.ID.String(),
+			Name:        user.UserWorkspaceDetail.Name,
+			Email:       *user.Email,
+			PhoneNumber: *user.PhoneNumber,
+			IsActive:    user.IsActive,
+			Role:        user.Role,
+			WorkspaceId: user.WorkspaceID.String(),
+			UserId:      user.UserID.String(),
+		})
+	}
+
+	return &workspace.UserWorkspacesResponse{
+		Success: true,
+		Data:    userWSRes,
+		Error:   nil,
+	}, nil
 }
 
 // ------------------------ Helper ------------------------
