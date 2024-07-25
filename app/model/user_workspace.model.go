@@ -12,3 +12,9 @@ type UpdateUserWorkspaceRequest struct {
 	CreateUserWorkspaceRequest
 }
 type UpdateUserWorkspaceResponse struct{}
+
+type InactiveUserWorkspaceRequest struct{}
+type InactiveUserWorkspaceResponse struct{}
+
+type RemoveUserWorkspaceRequest struct{}
+type RemoveUserWorkspaceResponse struct{}

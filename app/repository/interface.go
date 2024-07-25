@@ -31,3 +31,9 @@ type UserWorkspaceDetailRepository interface {
 	Delete(ctx context.Context, tx *gorm.DB, userWorkspaceDetail *entity.UserWorkspaceDetail) error
 	BulkCreate(ctx context.Context, tx *gorm.DB, userWorkspaceDetails []entity.UserWorkspaceDetail) error
 }
+
+type RedisRepository interface {
+	Set(ctx context.Context, key string, value string) error
+	Get(ctx context.Context, key string) (string, error)
+	Delete(ctx context.Context, key string) error
+}

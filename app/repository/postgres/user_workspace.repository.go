@@ -125,25 +125,26 @@ func (r *userWorkspaceRepository) buildFilter(
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
 	}
 
+	// Relation query
+	if filter.IsIncludeDetail {
+		query = query.InnerJoins("UserWorkspaceDetail", func(db *gorm.DB) *gorm.DB {
+			return r.buildRelationFilter(db, filter)
+		})
+	}
+
 	return query
 }
 
-func (r *userWorkspaceRepository) buildRelationFilter(ctx context.Context,
-	tx *gorm.DB,
+func (r *userWorkspaceRepository) buildRelationFilter(
+	db *gorm.DB,
 	filter *repository.FindUserWorkspaceByFilter,
 ) *gorm.DB {
-	query := r.db.WithContext(ctx)
-	if tx != nil {
-		query = tx.WithContext(ctx)
-	}
+	query := db
 
 	//
 	if filter.Name != nil {
 		filter.IsIncludeDetail = true
-	}
-
-	//
-	if filter.IsIncludeDetail {
+		query.Scopes(findByName(*filter.Name, "full_name_slug"))
 	}
 
 	return query

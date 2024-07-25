@@ -1,17 +1,20 @@
 package model
 
-import "github.com/google/uuid"
-
 type CreateWorkspaceRequest struct {
-	Name        string `json:"name" validate:"required"`
-	PhoneNumber string `json:"phone_number" validate:"required"`
-	Address     string `json:"address"`
-	Email       string `json:"email" validate:"required"`
+	Name        string  `json:"name" binding:"required"`
+	PhoneNumber *string `json:"phone_number"`
+	Address     *string `json:"address"`
+	Email       *string `json:"email"`
 }
 type CreateWorkspaceResponse struct{}
 
 type UpdateWorkspaceRequest struct {
-	ID uuid.UUID `query:"id" validate:"required"`
+	ID string `query:"id" binding:"required"`
 	CreateWorkspaceRequest
 }
 type UpdateWorkspaceResponse struct{}
+
+type InactiveWorkspaceRequest struct {
+	ID string `query:"id" binding:"required"`
+}
+type InactiveWorkspaceResponse struct{}

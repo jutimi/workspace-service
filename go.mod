@@ -4,7 +4,12 @@ go 1.21
 
 toolchain go1.22.4
 
-require github.com/google/uuid v1.6.0
+require (
+	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/google/uuid v1.6.0
+	github.com/gosimple/slug v1.14.0
+	github.com/gosimple/unidecode v1.0.1
+)
 
 require github.com/google/go-cmp v0.6.0 // indirect
 
@@ -13,8 +18,6 @@ require (
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
-	github.com/gosimple/slug v1.14.0 // indirect
-	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect

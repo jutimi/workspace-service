@@ -14,6 +14,7 @@ type Configuration struct {
 	PostgresDB PostgresDatabase `mapstructure:"postgres"`
 	Server     Server           `mapstructure:"server"`
 	GRPC       GRPC             `mapstructure:"grpc"`
+	Jwt        JWT              `mapstructure:"jwt"`
 }
 
 func Init(filePath string) {

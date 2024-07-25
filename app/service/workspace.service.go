@@ -35,3 +35,10 @@ func (s *workspaceService) UpdateWorkspace(
 ) (*model.UpdateWorkspaceResponse, error) {
 	return nil, nil
 }
+
+func (s *workspaceService) InactiveWorkspace(
+	ctx context.Context,
+	data *model.InactiveWorkspaceRequest,
+) (*model.InactiveWorkspaceResponse, error) {
+	return nil, nil
+}
