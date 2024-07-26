@@ -39,11 +39,13 @@ func (s *workspaceService) CreateWorkspace(
 	clientGRPC := client_grpc.NewOAuthClient()
 	defer clientGRPC.CloseConn()
 
+	// Get user payload from context
 	userPayload, err := utils.GetScopeContext[*utils.UserPayload](ctx, string(utils.USER_CONTEXT_KEY))
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}
 
+	// Get user data and check limit workspace
 	userId := userPayload.ID.String()
 	user, err := clientGRPC.GetUserByFilter(ctx, &oauth.GetUserByFilterParams{
 		Id: &userId,
@@ -62,6 +64,7 @@ func (s *workspaceService) CreateWorkspace(
 		return nil, errors.New(errors.ErrCodePassedLimitWorkspace)
 	}
 
+	// Get email and phone number
 	email := user.Data.Email
 	phoneNumber := user.Data.PhoneNumber
 	if data.Email != nil && *data.Email != "" {
@@ -71,6 +74,7 @@ func (s *workspaceService) CreateWorkspace(
 		phoneNumber = data.PhoneNumber
 	}
 
+	// Begin create workspace
 	tx := database.BeginPostgresTransaction()
 	ws := entity.NewWorkspace()
 	ws.Email = *email
@@ -95,7 +99,6 @@ func (s *workspaceService) CreateWorkspace(
 		tx.Rollback()
 		return nil, err
 	}
-
 	// Create organization
 	if err := s.helpers.OrganizationHelper.CreateOrganization(ctx, &helper.CreateOrganizationParams{
 		Tx:                 tx,

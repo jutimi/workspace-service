@@ -8,6 +8,10 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	ORGANiZATION_LEVEL_ROOT = 0
+)
+
 type Organization struct {
 	gorm.Model
 	ID                    uuid.UUID  `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`

@@ -2,6 +2,7 @@ package postgres_repository
 
 import (
 	"context"
+	"errors"
 	"time"
 	"workspace-server/app/entity"
 	"workspace-server/app/repository"
@@ -80,7 +81,13 @@ func (r *organizationRepository) FindByFilter(
 	return data, err
 }
 
-func (r *organizationRepository) FindDuplicateOrganization(ctx context.Context, name string) ([]entity.Organization, error) {
+func (r *organizationRepository) FindDuplicateOrganization(
+	ctx context.Context,
+	name string,
+) (
+	[]entity.Organization,
+	error,
+) {
 	var data []entity.Organization
 	nameSlug := utils.Slugify(name)
 
@@ -89,6 +96,23 @@ func (r *organizationRepository) FindDuplicateOrganization(ctx context.Context, 
 		return nil, query.Error
 	}
 	return data, nil
+}
+
+func (r *organizationRepository) FindByFilterForUpdate(
+	ctx context.Context,
+	data *repository.FindByFilterForUpdateParams,
+) ([]entity.Organization, error) {
+	filter, ok := data.Filter.(*repository.FindOrganizationByFilter)
+	if !ok {
+		return nil, errors.New("invalid argument")
+	}
+
+	var organizations []entity.Organization
+	query := r.buildFilter(ctx, data.Tx, filter)
+	query = buildLockQuery(query, data.LockOption)
+
+	err := query.Find(&organizations).Error
+	return organizations, err
 }
 
 // ------------------------------------------------------------------------------

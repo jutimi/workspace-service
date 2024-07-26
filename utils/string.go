@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/gosimple/slug"
 	"github.com/gosimple/unidecode"
 )
@@ -33,4 +34,25 @@ func ConvertToSnakeCase(str string) string {
 func Slugify(str string) string {
 	decodeStr := unidecode.Unidecode(str)
 	return slug.MakeLang(decodeStr, "vi")
+}
+
+func ConvertStringToUUID(str string) (uuid.UUID, error) {
+	uuid, err := uuid.Parse(str)
+	if err != nil {
+		return uuid, err
+	}
+
+	return uuid, nil
+}
+
+func ConvertSliceStringToUUID(str []string) ([]uuid.UUID, error) {
+	var result []uuid.UUID
+	for _, data := range str {
+		convertData, err := ConvertStringToUUID(data)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, convertData)
+	}
+	return result, nil
 }

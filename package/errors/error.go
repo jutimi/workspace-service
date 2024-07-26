@@ -24,10 +24,18 @@ const (
 	ErrCodeValidatorFormat       = 2
 	ErrCodeValidatorVerifiedData = 3
 
+	// Workspace Errors
 	ErrCodeWorkspaceNotFound    = 100
 	ErrCodePassedLimitWorkspace = 101
 
-	ErrCodeUserWorkspaceNotFound = 110
+	// User Workspace Errors
+	ErrCodeUserWorkspaceNotFound          = 110
+	ErrCodeUserWorkspaceNotInOrganization = 111
+
+	// Organization Errors
+	ErrCodeOrganizationNotFound         = 120
+	ErrCodeInvalidParentOrganizationIds = 121
+	ErrCodeInvalidLeaderIds             = 122
 
 	ErrCodeInternalServerError = 500
 	ErrCodeTimeout             = 408
@@ -71,6 +79,20 @@ var messages = map[int]map[string]string{
 	// User Workspace Error
 	ErrCodeUserWorkspaceNotFound: {
 		LangVN: "Không tìm thấy nhân viên. Vui không kiểm tra lại",
+	},
+	ErrCodeUserWorkspaceNotInOrganization: {
+		LangVN: "Nhân viên không thuộc phòng ban. Vui phải kiểm tra lại",
+	},
+
+	// Organization Error
+	ErrCodeOrganizationNotFound: {
+		LangVN: "Không tìm thấy phòng ban. Vui phải kiểm tra lại",
+	},
+	ErrCodeInvalidParentOrganizationIds: {
+		LangVN: "Thông tin phòng ban không hợp lệ. Vui phải kiểm tra lại",
+	},
+	ErrCodeInvalidLeaderIds: {
+		LangVN: "Thông tin quản lý không hợp lệ. Vui phải kiểm tra lại",
 	},
 }
 

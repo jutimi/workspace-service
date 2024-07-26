@@ -7,9 +7,8 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.14.0
 	github.com/gosimple/unidecode v1.0.1
+	github.com/jutimi/grpc-service v0.0.0-20240725145803-88cff613d7f8
 )
-
-require github.com/google/go-cmp v0.6.0 // indirect
 
 require (
 	github.com/bytedance/sonic/loader v0.1.1 // indirect
@@ -17,7 +16,6 @@ require (
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
-	github.com/jutimi/grpc-service v0.0.0-20240725145803-88cff613d7f8 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240528184218-531527333157 // indirect

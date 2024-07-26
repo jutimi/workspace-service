@@ -79,6 +79,10 @@ func buildLockQuery(query *gorm.DB, lockOption string) *gorm.DB {
 			Strength: clause.LockingStrengthUpdate,
 			Options:  clause.LockingOptionsSkipLocked,
 		})
+	case clause.LockingStrengthShare:
+		query = query.Clauses(clause.Locking{
+			Strength: clause.LockingStrengthShare,
+		})
 	default:
 		query = query.Clauses(clause.Locking{
 			Strength: clause.LockingStrengthUpdate,

@@ -1,6 +1,15 @@
 package repository
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
+
+type FindByFilterForUpdateParams struct {
+	Filter     interface{}
+	LockOption string
+	Tx         *gorm.DB
+}
 
 type FindWorkspaceByFilter struct {
 	ID           *uuid.UUID
@@ -46,4 +55,24 @@ type FindOrganizationByFilter struct {
 	Name                 *string
 	Limit                *int
 	Offset               *int
+}
+
+type UserWorkspaceOrganizationFilter struct {
+	ID               *uuid.UUID
+	IDs              []uuid.UUID
+	UserWorkspaceID  *uuid.UUID
+	UserWorkspaceIDs []uuid.UUID
+	WorkspaceID      *uuid.UUID
+	WorkspaceIDs     []uuid.UUID
+	OrganizationID   *uuid.UUID
+	OrganizationIDs  []uuid.UUID
+	Role             *string
+	Limit            *int
+	Offset           *int
+
+	// Include option
+	IsIncludeOrganization bool // Left join organization
+
+	// Require option
+	IsRequireOrganization bool // Inner join organization
 }

@@ -2,6 +2,7 @@ package postgres_repository
 
 import (
 	"context"
+	"errors"
 	"time"
 	"workspace-server/app/entity"
 	"workspace-server/app/repository"
@@ -67,4 +68,62 @@ func (r *userWorkspaceOrganizationRepository) BulkCreate(
 	}
 
 	return r.db.WithContext(ctx).Create(&userWorkspaceOrganizations).Error
+}
+
+func (r *userWorkspaceOrganizationRepository) FindByFilter(
+	ctx context.Context,
+	filter *repository.UserWorkspaceOrganizationFilter,
+) ([]entity.UserWorkspaceOrganization, error) {
+	var userWorkspaceOrganizations []entity.UserWorkspaceOrganization
+
+	err := r.buildFilter(ctx, nil, filter).Find(&userWorkspaceOrganizations).Error
+	return userWorkspaceOrganizations, err
+}
+
+func (r *userWorkspaceOrganizationRepository) FindByFilterForUpdate(
+	ctx context.Context,
+	data *repository.FindByFilterForUpdateParams,
+) ([]entity.UserWorkspaceOrganization, error) {
+	filter, ok := data.Filter.(*repository.UserWorkspaceOrganizationFilter)
+	if !ok {
+		return nil, errors.New("invalid argument")
+	}
+
+	var users []entity.UserWorkspaceOrganization
+	query := r.buildFilter(ctx, data.Tx, filter)
+	query = buildLockQuery(query, data.LockOption)
+
+	err := query.Find(&users).Error
+	return users, err
+}
+
+// ------------------------------------------------------------------------------
+func (r *userWorkspaceOrganizationRepository) buildFilter(
+	ctx context.Context,
+	tx *gorm.DB,
+	filter *repository.UserWorkspaceOrganizationFilter,
+) *gorm.DB {
+	query := r.db.WithContext(ctx)
+	if tx != nil {
+		query = tx.WithContext(ctx)
+	}
+
+	if filter.ID != nil {
+		query = query.Scopes(findByString(*filter.ID, "id"))
+	}
+	if filter.IDs != nil && len(filter.IDs) > 0 {
+		query = query.Scopes(findBySlice(filter.IDs, "id"))
+	}
+	if filter.Limit != nil && filter.Offset != nil {
+		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
+	}
+
+	// Relation query
+	if filter.IsIncludeOrganization {
+		query = query.Preload("Organization")
+	} else if filter.IsRequireOrganization {
+		query = query.InnerJoins("Organization")
+	}
+
+	return query
 }
