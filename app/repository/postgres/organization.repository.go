@@ -6,7 +6,6 @@ import (
 	"time"
 	"workspace-server/app/entity"
 	"workspace-server/app/repository"
-	"workspace-server/utils"
 
 	"gorm.io/gorm"
 )
@@ -81,21 +80,35 @@ func (r *organizationRepository) FindByFilter(
 	return data, err
 }
 
-func (r *organizationRepository) FindDuplicateOrganization(
+func (r *organizationRepository) FindExistedByFilter(
 	ctx context.Context,
-	name string,
+	filter *repository.FindOrganizationByFilter,
 ) (
 	[]entity.Organization,
 	error,
 ) {
 	var data []entity.Organization
-	nameSlug := utils.Slugify(name)
+	query := r.buildExistedFilter(ctx, nil, filter)
 
-	query := r.db.WithContext(ctx).Where("name_slug = ?", nameSlug).Find(&data)
-	if query.Error != nil {
-		return nil, query.Error
+	err := query.Find(&data).Error
+	return data, err
+}
+
+func (r *organizationRepository) FindOneByFilterForUpdate(
+	ctx context.Context,
+	data *repository.FindByFilterForUpdateParams,
+) (*entity.Organization, error) {
+	filter, ok := data.Filter.(*repository.FindOrganizationByFilter)
+	if !ok {
+		return nil, errors.New("invalid argument")
 	}
-	return data, nil
+
+	var organization *entity.Organization
+	query := r.buildFilter(ctx, data.Tx, filter)
+	query = buildLockQuery(query, data.LockOption)
+
+	err := query.First(&organization).Error
+	return organization, err
 }
 
 func (r *organizationRepository) FindByFilterForUpdate(
@@ -127,7 +140,7 @@ func (r *organizationRepository) buildFilter(
 	}
 
 	if filter.ID != nil {
-		query = query.Scopes(findByString(*filter.ID, "email"))
+		query = query.Scopes(findByString(*filter.ID, "id"))
 	}
 	if filter.ParentOrganizationID != nil {
 		query = query.Scopes(findByString(*filter.ParentOrganizationID, "parent_organization_id"))
@@ -140,6 +153,38 @@ func (r *organizationRepository) buildFilter(
 	}
 	if filter.Limit != nil && filter.Offset != nil {
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
+	}
+	if filter.WorkspaceID != nil {
+		query = query.Scopes(findByString(*filter.WorkspaceID, "workspace_id"))
+	}
+	if filter.Level != nil {
+		query = query.Scopes(findByString(*filter.Level, "level"))
+	}
+
+	return query
+}
+
+func (r *organizationRepository) buildExistedFilter(
+	ctx context.Context,
+	tx *gorm.DB,
+	filter *repository.FindOrganizationByFilter,
+) *gorm.DB {
+	query := r.db.WithContext(ctx)
+	if tx != nil {
+		query = tx.WithContext(ctx)
+	}
+
+	if filter.ID != nil {
+		query = query.Scopes(excludeByString(*filter.ID, "id"))
+	}
+	if filter.IDs != nil && len(filter.IDs) > 0 {
+		query = query.Scopes(excludeBySlice(filter.IDs, "id"))
+	}
+	if filter.Limit != nil && filter.Offset != nil {
+		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
+	}
+	if filter.Name != nil {
+		query = query.Scopes(orByName(*filter.Name, "name_slug"))
 	}
 
 	return query

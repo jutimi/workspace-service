@@ -67,6 +67,18 @@ func orByName(name, field string) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+func excludeByString[T uuid.UUID | string | int](str T, field string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Not(fmt.Sprintf("%s != ?", field), str)
+	}
+}
+
+func excludeBySlice[T []uuid.UUID | []string | []int](data T, field string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Not(fmt.Sprintf("%s NOT IN ?", field), data)
+	}
+}
+
 func buildLockQuery(query *gorm.DB, lockOption string) *gorm.DB {
 	switch lockOption {
 	case clause.LockingOptionsNoWait:

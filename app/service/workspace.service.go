@@ -13,6 +13,7 @@ import (
 	"workspace-server/utils"
 
 	"github.com/jutimi/grpc-service/oauth"
+	"gorm.io/gorm/clause"
 )
 
 type workspaceService struct {
@@ -125,12 +126,96 @@ func (s *workspaceService) UpdateWorkspace(
 	ctx context.Context,
 	data *model.UpdateWorkspaceRequest,
 ) (*model.UpdateWorkspaceResponse, error) {
-	return nil, nil
+	workspaceId, err := utils.ConvertStringToUUID(data.ID)
+	if err != nil {
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+
+	// Check duplicate workspace name
+	existedWS, err := s.postgresRepo.WorkspaceRepo.FindExistedByFilter(ctx, &repository.FindWorkspaceByFilter{
+		ID:   &workspaceId,
+		Name: &data.Name,
+	})
+	if err != nil {
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+	if len(existedWS) > 0 {
+		return nil, errors.New(errors.ErrCodeDuplicateWorkspaceName)
+	}
+
+	tx := database.BeginPostgresTransaction()
+	// Find workspace
+	workspace, err := s.postgresRepo.WorkspaceRepo.FindOneByFilterForUpdate(ctx, &repository.FindByFilterForUpdateParams{
+		Filter:     &repository.FindWorkspaceByFilter{ID: &workspaceId},
+		LockOption: clause.LockingOptionsNoWait,
+		Tx:         tx,
+	})
+	if err != nil {
+		return nil, errors.New(errors.ErrCodeWorkspaceNotFound)
+	}
+
+	// Update workspace
+	if data.Email != nil && *data.Email != "" {
+		workspace.Email = *data.Email
+	}
+	if data.PhoneNumber != nil && *data.PhoneNumber != "" {
+		workspace.PhoneNumber = *data.PhoneNumber
+	}
+	if err := s.postgresRepo.WorkspaceRepo.Update(ctx, tx, workspace); err != nil {
+		tx.Rollback()
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+
+	// Update organization
+	level := entity.ORGANiZATION_LEVEL_ROOT
+	organization, err := s.postgresRepo.OrganizationRepo.FindOneByFilterForUpdate(ctx, &repository.FindByFilterForUpdateParams{
+		Filter: &repository.FindOrganizationByFilter{
+			WorkspaceID: &workspaceId,
+			Level:       &level,
+		},
+		LockOption: clause.LockingOptionsNoWait,
+		Tx:         tx,
+	})
+	if err != nil {
+		tx.Rollback()
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+	organization.Name = workspace.Name
+	if err := s.postgresRepo.OrganizationRepo.Update(ctx, tx, organization); err != nil {
+		tx.Rollback()
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+
+	tx.Commit()
+
+	return &model.UpdateWorkspaceResponse{}, nil
 }
 
 func (s *workspaceService) InactiveWorkspace(
 	ctx context.Context,
 	data *model.InactiveWorkspaceRequest,
 ) (*model.InactiveWorkspaceResponse, error) {
-	return nil, nil
+	workspaceId, err := utils.ConvertStringToUUID(data.ID)
+	if err != nil {
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+
+	tx := database.BeginPostgresTransaction()
+	// Find workspace
+	workspace, err := s.postgresRepo.WorkspaceRepo.FindOneByFilterForUpdate(ctx, &repository.FindByFilterForUpdateParams{
+		Filter:     &repository.FindWorkspaceByFilter{ID: &workspaceId},
+		LockOption: clause.LockingOptionsNoWait,
+		Tx:         tx,
+	})
+	if err != nil {
+		return nil, errors.New(errors.ErrCodeWorkspaceNotFound)
+	}
+	workspace.IsActive = false
+	if err := s.postgresRepo.WorkspaceRepo.Update(ctx, tx, workspace); err != nil {
+		tx.Rollback()
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+	tx.Commit()
+
+	return &model.InactiveWorkspaceResponse{}, nil
 }

@@ -2,10 +2,10 @@ package postgres_repository
 
 import (
 	"context"
+	"errors"
 	"time"
 	"workspace-server/app/entity"
 	"workspace-server/app/repository"
-	"workspace-server/utils"
 
 	"gorm.io/gorm"
 )
@@ -114,15 +114,20 @@ func (r *workspaceRepository) FindExistedByFilter(
 	return data, err
 }
 
-func (r *workspaceRepository) FindDuplicateWS(ctx context.Context, name string) ([]entity.Workspace, error) {
-	var data []entity.Workspace
-	nameSlug := utils.Slugify(name)
-
-	query := r.db.WithContext(ctx).Where("name_slug = ?", nameSlug).Find(&data)
-	if query.Error != nil {
-		return nil, query.Error
+func (r *workspaceRepository) FindOneByFilterForUpdate(
+	ctx context.Context,
+	data *repository.FindByFilterForUpdateParams,
+) (*entity.Workspace, error) {
+	filter, ok := data.Filter.(*repository.FindWorkspaceByFilter)
+	if !ok {
+		return nil, errors.New("invalid argument")
 	}
-	return data, nil
+
+	var workspace *entity.Workspace
+	query := r.buildFilter(ctx, data.Tx, filter)
+	query = buildLockQuery(query, data.LockOption)
+	err := query.First(&workspace).Error
+	return workspace, err
 }
 
 // ------------------------------------------------------------------------------
@@ -181,10 +186,10 @@ func (r *workspaceRepository) buildExistedFilter(
 		query = query.Scopes(orByText(*filter.PhoneNumber, "phone_number"))
 	}
 	if filter.ID != nil {
-		query = query.Scopes(orByString(*filter.ID, "id"))
+		query = query.Scopes(excludeByString(*filter.ID, "id"))
 	}
 	if filter.IDs != nil && len(filter.IDs) > 0 {
-		query = query.Scopes(orBySlice(filter.IDs, "id"))
+		query = query.Scopes(excludeBySlice(filter.IDs, "id"))
 	}
 	if filter.Emails != nil && len(filter.Emails) > 0 {
 		query = query.Scopes(orBySlice(filter.Emails, "email"))

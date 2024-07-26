@@ -51,10 +51,12 @@ type FindUserWorkspaceByFilter struct {
 type FindOrganizationByFilter struct {
 	ID                   *uuid.UUID
 	IDs                  []uuid.UUID
+	WorkspaceID          *uuid.UUID
 	ParentOrganizationID *uuid.UUID
 	Name                 *string
 	Limit                *int
 	Offset               *int
+	Level                *int
 }
 
 type UserWorkspaceOrganizationFilter struct {

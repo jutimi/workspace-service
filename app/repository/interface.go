@@ -16,7 +16,7 @@ type WorkspaceRepository interface {
 	BulkCreate(ctx context.Context, tx *gorm.DB, workspaces []entity.Workspace) error
 	CountByFilter(ctx context.Context, filter *FindWorkspaceByFilter) (int64, error)
 	FindExistedByFilter(ctx context.Context, filter *FindWorkspaceByFilter) ([]entity.Workspace, error)
-	FindDuplicateWS(ctx context.Context, name string) ([]entity.Workspace, error)
+	FindOneByFilterForUpdate(ctx context.Context, filter *FindByFilterForUpdateParams) (*entity.Workspace, error)
 }
 
 type UserWorkspaceRepository interface {
@@ -48,8 +48,9 @@ type OrganizationRepository interface {
 	Delete(ctx context.Context, tx *gorm.DB, organization *entity.Organization) error
 	FindOneByFilter(ctx context.Context, filter *FindOrganizationByFilter) (*entity.Organization, error)
 	FindByFilter(ctx context.Context, filter *FindOrganizationByFilter) ([]entity.Organization, error)
-	FindDuplicateOrganization(ctx context.Context, name string) ([]entity.Organization, error)
+	FindExistedByFilter(ctx context.Context, filter *FindOrganizationByFilter) ([]entity.Organization, error)
 	FindByFilterForUpdate(ctx context.Context, data *FindByFilterForUpdateParams) ([]entity.Organization, error)
+	FindOneByFilterForUpdate(ctx context.Context, data *FindByFilterForUpdateParams) (*entity.Organization, error)
 }
 
 type UserWorkspaceOrganizationRepository interface {
