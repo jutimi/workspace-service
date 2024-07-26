@@ -13,6 +13,10 @@ const (
 	ROLE_ADMIN = "admin"
 )
 
+const (
+	DEFAULT_PASSWORD = "123456789"
+)
+
 type UserWorkspace struct {
 	gorm.Model
 	ID          uuid.UUID `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`

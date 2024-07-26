@@ -3,7 +3,10 @@ package model
 import "github.com/google/uuid"
 
 type CreateUserWorkspaceRequest struct {
-	Detail CreateUserWorkspaceDetailRequest `json:"detail" validate:"required"`
+	Name        string                           `json:"name" validate:"required"`
+	Email       *string                          `json:"email"`
+	PhoneNumber *string                          `json:"phone_number"`
+	Detail      CreateUserWorkspaceDetailRequest `json:"detail" validate:"required"`
 }
 type CreateUserWorkspaceResponse struct{}
 

@@ -11,13 +11,9 @@ type UserPayload struct {
 }
 
 type WorkspacePayload struct {
-	UserPayload
-	WorkspaceID uuid.UUID `json:"workspace_id"`
-	jwt.RegisteredClaims
-}
-
-type UserWorkspacePayload struct {
-	WorkspacePayload
+	ID              uuid.UUID `json:"id"`
+	Scope           string    `json:"scopes"`
+	WorkspaceID     uuid.UUID `json:"workspace_id"`
 	UserWorkspaceID uuid.UUID `json:"user_workspace_id"`
 	jwt.RegisteredClaims
 }
@@ -55,15 +51,15 @@ func ParseWSToken(tokenString string) (*WorkspacePayload, error) {
 }
 
 // Get payload from user workspace token
-func ParseUserWSToken(tokenString string) (*UserWorkspacePayload, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &UserWorkspacePayload{}, func(token *jwt.Token) (interface{}, error) {
+func ParseUserWSToken(tokenString string) (*WorkspacePayload, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &WorkspacePayload{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(""), nil
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	if claims, ok := token.Claims.(*UserWorkspacePayload); ok && token.Valid {
+	if claims, ok := token.Claims.(*WorkspacePayload); ok && token.Valid {
 		return claims, nil
 	}
 
