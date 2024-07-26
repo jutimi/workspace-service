@@ -9,7 +9,6 @@ import (
 	"workspace-server/utils"
 
 	"github.com/google/uuid"
-	"github.com/jutimi/grpc-service/common"
 	grpc_utils "github.com/jutimi/grpc-service/utils"
 	"github.com/jutimi/grpc-service/workspace"
 )
@@ -37,10 +36,12 @@ func NewGRPCServer(
 	}
 }
 
-func (s *grpcServer) GetWorkspaceById(ctx context.Context, data *common.GetByIdParams) (*workspace.WorkspaceResponse, error) {
-	id, err := utils.ConvertStringToUUID(data.Id)
+func (s *grpcServer) GetWorkspaceByFilter(ctx context.Context, data *workspace.GetWorkspaceByFilterParams) (*workspace.WorkspaceResponse, error) {
+	customErr := errors.New(errors.ErrCodeInternalServerError)
+	ids := make([]uuid.UUID, 0)
+
+	id, err := utils.ConvertStringToUUID(*data.Id)
 	if err != nil {
-		customErr := errors.New(errors.ErrCodeInternalServerError)
 		return &workspace.WorkspaceResponse{
 			Success: false,
 			Data:    nil,
@@ -50,12 +51,28 @@ func (s *grpcServer) GetWorkspaceById(ctx context.Context, data *common.GetByIdP
 			),
 		}, nil
 	}
+	for _, id := range data.Ids {
+		convertId, err := utils.ConvertStringToUUID(id)
+		if err != nil {
+			return &workspace.WorkspaceResponse{
+				Success: false,
+				Data:    nil,
+				Error: grpc_utils.FormatErrorResponse(
+					int32(customErr.GetCode()),
+					customErr.Error(),
+				),
+			}, nil
+		}
+		ids = append(ids, convertId)
+	}
 
 	ws, err := s.postgresRepo.WorkspaceRepo.FindOneByFilter(ctx, &repository.FindWorkspaceByFilter{
-		ID: &id,
+		ID:       &id,
+		IsActive: data.IsActive,
+		IDs:      ids,
 	})
 	if err != nil {
-		customErr := errors.New(errors.ErrCodeWorkspaceNotFound)
+		customErr = errors.New(errors.ErrCodeWorkspaceNotFound)
 		return &workspace.WorkspaceResponse{
 			Success: false,
 			Data:    nil,
@@ -77,9 +94,10 @@ func (s *grpcServer) GetWorkspaceById(ctx context.Context, data *common.GetByIdP
 }
 
 func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *workspace.GetUserWorkspaceByFilterParams) (*workspace.UserWorkspaceResponse, error) {
+	customErr := errors.New(errors.ErrCodeInternalServerError)
+
 	filter, err := convertUserParamsToFilter(data)
 	if err != nil {
-		customErr := errors.New(errors.ErrCodeInternalServerError)
 		return &workspace.UserWorkspaceResponse{
 			Success: false,
 			Data:    nil,
@@ -92,7 +110,7 @@ func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *workspa
 
 	userWs, err := s.postgresRepo.UserWorkspaceRepo.FindOneByFilter(ctx, filter)
 	if err != nil {
-		customErr := errors.New(errors.ErrCodeUserWorkspaceNotFound)
+		customErr = errors.New(errors.ErrCodeUserWorkspaceNotFound)
 		return &workspace.UserWorkspaceResponse{
 			Success: false,
 			Data:    nil,
@@ -121,10 +139,10 @@ func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *workspa
 
 func (s *grpcServer) GetUserWorkspacesByFilter(ctx context.Context, data *workspace.GetUserWorkspaceByFilterParams) (*workspace.UserWorkspacesResponse, error) {
 	var userWSRes []*workspace.UserWorkspaceDetail
+	customErr := errors.New(errors.ErrCodeInternalServerError)
 
 	filter, err := convertUserParamsToFilter(data)
 	if err != nil {
-		customErr := errors.New(errors.ErrCodeInternalServerError)
 		return &workspace.UserWorkspacesResponse{
 			Success: false,
 			Data:    nil,
@@ -137,7 +155,7 @@ func (s *grpcServer) GetUserWorkspacesByFilter(ctx context.Context, data *worksp
 
 	userWs, err := s.postgresRepo.UserWorkspaceRepo.FindByFilter(ctx, filter)
 	if err != nil {
-		customErr := errors.New(errors.ErrCodeUserWorkspaceNotFound)
+		customErr = errors.New(errors.ErrCodeUserWorkspaceNotFound)
 		return &workspace.UserWorkspacesResponse{
 			Success: false,
 			Data:    nil,
