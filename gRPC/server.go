@@ -2,6 +2,7 @@ package server_grpc
 
 import (
 	"context"
+	"workspace-server/app/entity"
 	"workspace-server/app/helper"
 	"workspace-server/app/repository"
 	postgres_repository "workspace-server/app/repository/postgres"
@@ -129,7 +130,7 @@ func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *workspa
 			Email:       *userWs.Email,
 			PhoneNumber: *userWs.PhoneNumber,
 			IsActive:    userWs.IsActive,
-			Role:        userWs.Role,
+			Role:        convertUserWSRole(userWs.Role),
 			WorkspaceId: userWs.WorkspaceID.String(),
 			UserId:      userWs.UserID.String(),
 		},
@@ -173,7 +174,7 @@ func (s *grpcServer) GetUserWorkspacesByFilter(ctx context.Context, data *worksp
 			Email:       *user.Email,
 			PhoneNumber: *user.PhoneNumber,
 			IsActive:    user.IsActive,
-			Role:        user.Role,
+			Role:        convertUserWSRole(user.Role),
 			WorkspaceId: user.WorkspaceID.String(),
 			UserId:      user.UserID.String(),
 		})
@@ -257,4 +258,15 @@ func convertUserParamsToFilter(data *workspace.GetUserWorkspaceByFilterParams) (
 		Offset:          &offset,
 		IsIncludeDetail: true,
 	}, nil
+}
+
+func convertUserWSRole(role string) workspace.UserWorkspaceRole {
+	switch role {
+	case entity.ROLE_OWNER:
+		return workspace.UserWorkspaceRole_OWNER
+	case entity.ROLE_ADMIN:
+		return workspace.UserWorkspaceRole_ADMIN
+	default:
+		return workspace.UserWorkspaceRole_USER
+	}
 }

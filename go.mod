@@ -7,7 +7,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.14.0
 	github.com/gosimple/unidecode v1.0.1
-	github.com/jutimi/grpc-service v0.0.0-20240726160144-896f53d6fdca
+	github.com/jutimi/grpc-service v0.0.0-20240727165551-82db4ed284b0
 )
 
 require (
