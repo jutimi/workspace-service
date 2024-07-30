@@ -1,7 +1,7 @@
 package model
 
 type CreateWorkspaceRequest struct {
-	Name        string  `json:"name" binding:"required"`
+	Name        string  `json:"name" validate:"required"`
 	PhoneNumber *string `json:"phone_number"`
 	Address     *string `json:"address"`
 	Email       *string `json:"email"`
@@ -9,12 +9,12 @@ type CreateWorkspaceRequest struct {
 type CreateWorkspaceResponse struct{}
 
 type UpdateWorkspaceRequest struct {
-	ID string `query:"id" binding:"required"`
+	ID string `query:"id" validate:"required"`
 	CreateWorkspaceRequest
 }
 type UpdateWorkspaceResponse struct{}
 
 type InactiveWorkspaceRequest struct {
-	ID string `query:"id" binding:"required"`
+	ID string `query:"id" validate:"required"`
 }
 type InactiveWorkspaceResponse struct{}

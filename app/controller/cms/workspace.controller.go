@@ -1,4 +1,4 @@
-package api
+package cms
 
 import (
 	"context"
@@ -6,8 +6,9 @@ import (
 	"time"
 	"workspace-server/app/model"
 	"workspace-server/app/service"
-	_errors "workspace-server/package/errors"
 	"workspace-server/utils"
+
+	_errors "workspace-server/package/errors"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -22,12 +23,12 @@ func NewApiWorkspaceController(router *gin.Engine, services service.ServiceColle
 
 	group := router.Group("api/v1/workspaces")
 	{
-		group.POST("/create", handler.create)
+		group.POST("/update", handler.update)
 	}
 }
 
-func (h *workspaceHandler) create(c *gin.Context) {
-	var data model.CreateWorkspaceRequest
+func (h *workspaceHandler) update(c *gin.Context) {
+	var data model.UpdateWorkspaceRequest
 	if err := c.ShouldBindBodyWith(&data, binding.JSON); err != nil {
 		resErr := _errors.NewValidatorError(err)
 		c.JSON(http.StatusBadRequest, utils.FormatErrorResponse(resErr))
@@ -38,7 +39,7 @@ func (h *workspaceHandler) create(c *gin.Context) {
 	defer cancel()
 	ctx = context.WithValue(ctx, utils.GIN_CONTEXT_KEY, c)
 
-	res, err := h.services.WorkspaceSvc.CreateWorkspace(ctx, &data)
+	res, err := h.services.WorkspaceSvc.UpdateWorkspace(ctx, &data)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.FormatErrorResponse(err))
 		return

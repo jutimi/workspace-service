@@ -17,18 +17,15 @@ import (
 type userWorkspaceService struct {
 	helpers      helper.HelperCollections
 	postgresRepo postgres_repository.PostgresRepositoryCollections
-	clientGRPC   client_grpc.OAuthClient
 }
 
 func NewUserWorkspaceService(
 	helpers helper.HelperCollections,
 	postgresRepo postgres_repository.PostgresRepositoryCollections,
-	clientGRPC client_grpc.OAuthClient,
 ) UserWorkspaceService {
 	return &userWorkspaceService{
 		helpers:      helpers,
 		postgresRepo: postgresRepo,
-		clientGRPC:   clientGRPC,
 	}
 }
 
@@ -39,7 +36,9 @@ func (s *userWorkspaceService) CreateUserWorkspace(ctx context.Context, data *mo
 	}
 
 	// Create user account
-	user, err := s.clientGRPC.CreateUser(ctx, &oauth.CreateUserParams{
+	clientGRPC := client_grpc.NewOAuthClient()
+	defer clientGRPC.CloseConn()
+	user, err := clientGRPC.CreateUser(ctx, &oauth.CreateUserParams{
 		PhoneNumber: data.PhoneNumber,
 		Email:       data.PhoneNumber,
 		Password:    entity.DEFAULT_PASSWORD,

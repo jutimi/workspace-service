@@ -17,3 +17,9 @@ type UserWorkspaceService interface {
 	InactiveUserWorkspace(ctx context.Context, data *model.InactiveUserWorkspaceRequest) (*model.InactiveUserWorkspaceResponse, error)
 	RemoveUserWorkspace(ctx context.Context, data *model.RemoveUserWorkspaceRequest) (*model.RemoveUserWorkspaceResponse, error)
 }
+
+type OrganizationService interface {
+	CreateOrganization(ctx context.Context, data *model.CreateOrganizationRequest) (*model.CreateOrganizationResponse, error)
+	UpdateOrganization(ctx context.Context, data *model.UpdateOrganizationRequest) (*model.UpdateOrganizationResponse, error)
+	RemoveOrganization(ctx context.Context, data *model.RemoveOrganizationRequest) (*model.RemoveOrganizationResponse, error)
+}

@@ -26,8 +26,8 @@ type CreateOrganizationParams struct {
 	Members            []MemberInfo
 }
 type MemberInfo struct {
-	LeaderIds *string
-	entity.UserWorkspace
+	LeaderIds            *string // List of leader ids of user
+	entity.UserWorkspace         // User workspace info of user
 }
 
 type CreateUserWorkspaceOrganizationParams struct {

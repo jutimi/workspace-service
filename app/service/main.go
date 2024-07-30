@@ -7,7 +7,8 @@ import (
 )
 
 type ServiceCollections struct {
-	WorkspaceSvc WorkspaceService
+	WorkspaceSvc     WorkspaceService
+	UserWorkspaceSvc UserWorkspaceService
 }
 
 func RegisterServices(
@@ -17,6 +18,7 @@ func RegisterServices(
 	otherRepo other_repository.OtherRepositoryCollections,
 ) ServiceCollections {
 	return ServiceCollections{
-		WorkspaceSvc: NewWorkspaceService(helpers, postgresRepo),
+		WorkspaceSvc:     NewWorkspaceService(helpers, postgresRepo),
+		UserWorkspaceSvc: NewUserWorkspaceService(helpers, postgresRepo),
 	}
 }
