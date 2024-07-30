@@ -17,22 +17,23 @@ type CreateUserWsParams struct {
 }
 
 type CreateOrganizationParams struct {
-	Tx                 *gorm.DB
-	WorkspaceID        uuid.UUID
-	ParentOrganization *entity.Organization
-	Name               string
-	Leader             *MemberInfo
-	SubLeaders         []MemberInfo
-	Members            []MemberInfo
+	Tx                   *gorm.DB
+	WorkspaceID          uuid.UUID
+	ParentOrganizationId *uuid.UUID // Parent organization id
+	ParentLeaderId       *uuid.UUID // Leader of organization leader
+	Name                 string
+	Leader               *uuid.UUID
+	SubLeaders           []SubLeaderData
 }
-type MemberInfo struct {
-	LeaderIds            *string // List of leader ids of user
-	entity.UserWorkspace         // User workspace info of user
+type SubLeaderData struct {
+	SubLeaderId uuid.UUID
+	MemberIds   []uuid.UUID
 }
 
 type CreateUserWorkspaceOrganizationParams struct {
-	Tx           *gorm.DB
-	Organization *entity.Organization
-	Data         []MemberInfo
-	Role         string
+	Tx               *gorm.DB
+	Organization     *entity.Organization
+	UserWorkspaceIds []uuid.UUID
+	LeaderIds        []uuid.UUID
+	Role             string
 }

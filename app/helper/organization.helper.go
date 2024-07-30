@@ -28,11 +28,14 @@ func NewOrganizationHelper(
 }
 
 func (h *organizationHelper) CreateOrganization(ctx context.Context, data *CreateOrganizationParams) error {
+	leaderIds := make([]uuid.UUID, 0)
+
 	// Create organization
 	organization := entity.NewOrganization()
 	organization.Name = data.Name
 	organization.BaseWorkspace.WorkspaceID = data.WorkspaceID
 	organization.Level = entity.ORGANiZATION_LEVEL_ROOT
+	// Check parent organization
 	if data.ParentOrganization != nil {
 		organization.Level = data.ParentOrganization.Level + 1
 		organization.ParentOrganizationID = &data.ParentOrganization.ID
@@ -103,7 +106,7 @@ func (h *organizationHelper) createUserWorkspaceOrganization(
 	}
 
 	users := make([]entity.UserWorkspaceOrganization, 0)
-	for _, member := range data.Data {
+	for _, userWSId := range data.UserWorkspaceIds {
 		// Validate leader tree before create
 		if err := h.validateLeaderIds(ctx, data.Tx, *member.LeaderIds); err != nil {
 			return err
