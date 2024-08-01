@@ -107,6 +107,15 @@ func (r *userWorkspaceOrganizationRepository) FindByFilterForUpdate(
 	return users, err
 }
 
+func (r *userWorkspaceOrganizationRepository) DeleteByFilter(
+	ctx context.Context,
+	tx *gorm.DB,
+	filter *repository.FindUserWorkspaceOrganizationFilter,
+) error {
+	query := r.buildFilter(ctx, tx, filter)
+	return query.Delete(&entity.UserWorkspaceOrganization{}).Error
+}
+
 // ------------------------------------------------------------------------------
 func (r *userWorkspaceOrganizationRepository) buildFilter(
 	ctx context.Context,

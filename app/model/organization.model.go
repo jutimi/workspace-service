@@ -16,12 +16,12 @@ type SubLeaderData struct {
 }
 
 type UpdateOrganizationRequest struct {
-	Id string `json:"id" validate:"required"`
+	Id uuid.UUID `json:"id" validate:"required"`
 	CreateOrganizationRequest
 }
 type UpdateOrganizationResponse struct{}
 
 type RemoveOrganizationRequest struct {
-	Id string `params:"id" validate:"required"`
+	Id uuid.UUID `params:"id" validate:"required"`
 }
 type RemoveOrganizationResponse struct{}

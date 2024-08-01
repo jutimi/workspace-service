@@ -39,6 +39,7 @@ const (
 	ErrCodeInvalidParentOrganizationIds  = 121
 	ErrCodeInvalidLeaderIds              = 122
 	ErrCodeInvalidParentOrganizationData = 123
+	ErrCodeOrganizationHasChild          = 124
 
 	ErrCodeInternalServerError = 500
 	ErrCodeTimeout             = 408
@@ -87,24 +88,27 @@ var messages = map[int]map[string]string{
 		LangVN: "Không tìm thấy nhân viên. Vui không kiểm tra lại",
 	},
 	ErrCodeUserWorkspaceNotInOrganization: {
-		LangVN: "Nhân viên không thuộc phòng ban. Vui phải kiểm tra lại",
+		LangVN: "Nhân viên không thuộc phòng ban. Vui lòng kiểm tra lại",
 	},
 	ErrCodeUserWorkspaceAlreadyInOrganization: {
-		LangVN: "Nhân viên đã thuộc phòng ban khác. Vui phải kiểm tra lại",
+		LangVN: "Nhân viên đã thuộc phòng ban khác. Vui lòng kiểm tra lại",
 	},
 
 	// Organization Error
 	ErrCodeOrganizationNotFound: {
-		LangVN: "Không tìm thấy phòng ban. Vui phải kiểm tra lại",
+		LangVN: "Không tìm thấy phòng ban. Vui lòng kiểm tra lại",
 	},
 	ErrCodeInvalidParentOrganizationIds: {
-		LangVN: "Thông tin phòng ban không hợp lệ. Vui phải kiểm tra lại",
+		LangVN: "Thông tin phòng ban không hợp lệ. Vui lòng kiểm tra lại",
 	},
 	ErrCodeInvalidLeaderIds: {
-		LangVN: "Thông tin quản lý không hợp lệ. Vui phải kiểm tra lại",
+		LangVN: "Thông tin quản lý không hợp lệ. Vui lòng kiểm tra lại",
 	},
 	ErrCodeInvalidParentOrganizationData: {
-		LangVN: "Thông tin phòng ban quản lý không hợp lệ. Vui phải kiểm tra lại",
+		LangVN: "Thông tin phòng ban quản lý không hợp lệ. Vui lòng kiểm tra lại",
+	},
+	ErrCodeOrganizationHasChild: {
+		LangVN: "Có phòng ban khác nằm dưới phòng ban này. Vui lòng kiểm tra lại",
 	},
 }
 

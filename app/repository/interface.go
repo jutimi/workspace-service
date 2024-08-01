@@ -61,4 +61,5 @@ type UserWorkspaceOrganizationRepository interface {
 	FindByFilter(ctx context.Context, filter *FindUserWorkspaceOrganizationFilter) ([]entity.UserWorkspaceOrganization, error)
 	FindOneByFilter(ctx context.Context, filter *FindUserWorkspaceOrganizationFilter) (*entity.UserWorkspaceOrganization, error)
 	FindByFilterForUpdate(ctx context.Context, data *FindByFilterForUpdateParams) ([]entity.UserWorkspaceOrganization, error)
+	DeleteByFilter(ctx context.Context, tx *gorm.DB, filter *FindUserWorkspaceOrganizationFilter) error
 }

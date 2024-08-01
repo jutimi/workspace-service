@@ -35,3 +35,22 @@ type CreateUserWorkspaceOrganizationParams struct {
 	LeaderIds        string      // List ids of mangers of leader (user workspace ids)
 	Role             string
 }
+
+type UpdateOrganizationParams struct {
+	Organization         *entity.Organization
+	Tx                   *gorm.DB
+	ParentOrganizationId *uuid.UUID // Parent organization id (organization id)
+	ParentLeaderId       *uuid.UUID // Manager of organization leader (user workspace id)
+	Name                 string
+	LeaderID             *uuid.UUID // Leader of organization (user workspace id)
+	SubLeaders           []model.SubLeaderData
+}
+
+type validateOrganizationParams struct {
+	OrganizationId *uuid.UUID
+	LeaderId       *uuid.UUID
+}
+type validateOrganizationResult struct {
+	Organization              *entity.Organization
+	UserWorkspaceOrganization *entity.UserWorkspaceOrganization
+}

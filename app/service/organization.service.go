@@ -4,6 +4,7 @@ import (
 	"context"
 	"workspace-server/app/helper"
 	"workspace-server/app/model"
+	"workspace-server/app/repository"
 	postgres_repository "workspace-server/app/repository/postgres"
 	"workspace-server/package/database"
 	"workspace-server/package/errors"
@@ -64,12 +65,90 @@ func (s *organizationService) UpdateOrganization(
 	ctx context.Context,
 	data *model.UpdateOrganizationRequest,
 ) (*model.UpdateOrganizationResponse, error) {
-	return nil, nil
+	// Check organization
+	organization, err := s.postgresRepo.OrganizationRepo.FindOneByFilter(ctx, &repository.FindOrganizationByFilter{
+		ID: &data.Id,
+	})
+	if err != nil {
+		return nil, errors.New(errors.ErrCodeOrganizationNotFound)
+	}
+
+	// Begin update organization
+	tx := database.BeginPostgresTransaction()
+	if tx.Error != nil {
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+
+	if err := s.helpers.OrganizationHelper.UpdateOrganization(ctx, &helper.UpdateOrganizationParams{
+		Tx:                   tx,
+		Organization:         organization,
+		ParentOrganizationId: data.ParentOrganizationId,
+		ParentLeaderId:       data.ParentOrganizationLeaderId,
+		LeaderID:             data.LeaderId,
+		Name:                 data.Name,
+	}); err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+
+	return &model.UpdateOrganizationResponse{}, nil
 }
 
 func (s *organizationService) RemoveOrganization(
 	ctx context.Context,
 	data *model.RemoveOrganizationRequest,
 ) (*model.RemoveOrganizationResponse, error) {
-	return nil, nil
+	limit := 1
+	offset := 0
+
+	// Check organization
+	organization, err := s.postgresRepo.OrganizationRepo.FindOneByFilter(ctx, &repository.FindOrganizationByFilter{
+		ID: &data.Id,
+	})
+	if err != nil {
+		return nil, errors.New(errors.ErrCodeOrganizationNotFound)
+	}
+
+	// Check existed child organization
+	existedChildOrganization, err := s.postgresRepo.OrganizationRepo.FindByFilter(ctx, &repository.FindOrganizationByFilter{
+		ParentOrganizationID: &data.Id,
+		Limit:                &limit,
+		Offset:               &offset,
+	})
+	if err != nil {
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+	if len(existedChildOrganization) > 0 {
+		return nil, errors.New(errors.ErrCodeOrganizationHasChild)
+	}
+
+	// Begin organization
+	tx := database.BeginPostgresTransaction()
+	if tx.Error != nil {
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+
+	// Remove user workspace organization
+	if err := s.postgresRepo.UserWorkspaceOrganizationRepo.DeleteByFilter(ctx, tx, &repository.FindUserWorkspaceOrganizationFilter{
+		OrganizationID: &data.Id,
+	}); err != nil {
+		tx.Rollback()
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+
+	// Remove organization
+	if err := s.postgresRepo.OrganizationRepo.Delete(ctx, tx, organization); err != nil {
+		tx.Rollback()
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
+
+	return &model.RemoveOrganizationResponse{}, nil
 }
