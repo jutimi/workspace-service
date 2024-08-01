@@ -136,6 +136,9 @@ func (r *userWorkspaceOrganizationRepository) buildFilter(
 	if filter.Limit != nil && filter.Offset != nil {
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
 	}
+	if filter.LeaderIDs != nil && len(*filter.LeaderIDs) > 0 {
+		query = query.Scopes(findByText(*filter.LeaderIDs, "leader_ids"))
+	}
 
 	// Relation query
 	if filter.IsIncludeOrganization {

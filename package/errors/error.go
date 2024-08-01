@@ -35,11 +35,12 @@ const (
 	ErrCodeUserWorkspaceAlreadyInOrganization = 112
 
 	// Organization Errors
-	ErrCodeOrganizationNotFound          = 120
-	ErrCodeInvalidParentOrganizationIds  = 121
-	ErrCodeInvalidLeaderIds              = 122
-	ErrCodeInvalidParentOrganizationData = 123
-	ErrCodeOrganizationHasChild          = 124
+	ErrCodeOrganizationNotFound                 = 120
+	ErrCodeInvalidParentOrganizationIds         = 121
+	ErrCodeInvalidLeaderIds                     = 122
+	ErrCodeInvalidParentOrganizationData        = 123
+	ErrCodeOrganizationHasChild                 = 124
+	ErrCodeDuplicateUserWorkspaceInOrganization = 125
 
 	ErrCodeInternalServerError = 500
 	ErrCodeTimeout             = 408
@@ -109,6 +110,9 @@ var messages = map[int]map[string]string{
 	},
 	ErrCodeOrganizationHasChild: {
 		LangVN: "Có phòng ban khác nằm dưới phòng ban này. Vui lòng kiểm tra lại",
+	},
+	ErrCodeDuplicateUserWorkspaceInOrganization: {
+		LangVN: "Nhân viên đã tồn tại trong phòng ban. Vui lòng kiểm tra lại",
 	},
 }
 

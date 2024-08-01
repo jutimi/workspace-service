@@ -54,3 +54,9 @@ type validateOrganizationResult struct {
 	Organization              *entity.Organization
 	UserWorkspaceOrganization *entity.UserWorkspaceOrganization
 }
+
+type updateParentIdsParams struct {
+	Tx           *gorm.DB
+	OldParentIds string
+	NewParentIds string
+}

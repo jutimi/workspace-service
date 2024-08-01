@@ -160,6 +160,9 @@ func (r *organizationRepository) buildFilter(
 	if filter.Level != nil {
 		query = query.Scopes(findByString(*filter.Level, "level"))
 	}
+	if filter.ParentOrganizationIDsStr != nil && len(*filter.ParentOrganizationIDsStr) > 0 {
+		query = query.Scopes(findByText(*filter.ParentOrganizationIDsStr, "parent_organization_ids"))
+	}
 
 	return query
 }

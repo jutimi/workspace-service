@@ -49,14 +49,15 @@ type FindUserWorkspaceByFilter struct {
 }
 
 type FindOrganizationByFilter struct {
-	ID                   *uuid.UUID
-	IDs                  []uuid.UUID
-	WorkspaceID          *uuid.UUID
-	ParentOrganizationID *uuid.UUID
-	Name                 *string
-	Limit                *int
-	Offset               *int
-	Level                *int
+	ID                       *uuid.UUID
+	IDs                      []uuid.UUID
+	WorkspaceID              *uuid.UUID
+	ParentOrganizationID     *uuid.UUID
+	Name                     *string
+	Limit                    *int
+	Offset                   *int
+	Level                    *int
+	ParentOrganizationIDsStr *string
 }
 
 type FindUserWorkspaceOrganizationFilter struct {
@@ -71,6 +72,7 @@ type FindUserWorkspaceOrganizationFilter struct {
 	Role             *string
 	Limit            *int
 	Offset           *int
+	LeaderIDs        *string
 
 	// Include option
 	IsIncludeOrganization bool // Left join organization
