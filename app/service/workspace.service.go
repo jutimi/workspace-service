@@ -102,16 +102,13 @@ func (s *workspaceService) CreateWorkspace(
 	}
 	// Create organization
 	if err := s.helpers.OrganizationHelper.CreateOrganization(ctx, &helper.CreateOrganizationParams{
-		Tx:                 tx,
-		WorkspaceID:        ws.ID,
-		ParentOrganization: nil,
-		Leader: &helper.MemberInfo{
-			LeaderIds:     nil,
-			UserWorkspace: *userWS,
-		},
-		Name:       data.Name,
-		SubLeaders: nil,
-		Members:    nil,
+		Tx:                   tx,
+		WorkspaceID:          ws.ID,
+		ParentOrganizationId: nil,
+		ParentLeaderId:       nil,
+		LeaderID:             &userWS.ID,
+		Name:                 data.Name,
+		SubLeaders:           nil,
 	}); err != nil {
 		tx.Rollback()
 		return nil, err

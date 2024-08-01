@@ -36,6 +36,7 @@ func Slugify(str string) string {
 	return slug.MakeLang(decodeStr, "vi")
 }
 
+// Convert string to UUID
 func ConvertStringToUUID(str string) (uuid.UUID, error) {
 	uuid, err := uuid.Parse(str)
 	if err != nil {
@@ -45,6 +46,7 @@ func ConvertStringToUUID(str string) (uuid.UUID, error) {
 	return uuid, nil
 }
 
+// Convert slice of string to slice of UUID
 func ConvertSliceStringToUUID(str []string) ([]uuid.UUID, error) {
 	var result []uuid.UUID
 	for _, data := range str {

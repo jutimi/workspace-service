@@ -72,7 +72,7 @@ func (r *userWorkspaceOrganizationRepository) BulkCreate(
 
 func (r *userWorkspaceOrganizationRepository) FindByFilter(
 	ctx context.Context,
-	filter *repository.UserWorkspaceOrganizationFilter,
+	filter *repository.FindUserWorkspaceOrganizationFilter,
 ) ([]entity.UserWorkspaceOrganization, error) {
 	var userWorkspaceOrganizations []entity.UserWorkspaceOrganization
 
@@ -80,11 +80,21 @@ func (r *userWorkspaceOrganizationRepository) FindByFilter(
 	return userWorkspaceOrganizations, err
 }
 
+func (r *userWorkspaceOrganizationRepository) FindOneByFilter(
+	ctx context.Context,
+	filter *repository.FindUserWorkspaceOrganizationFilter,
+) (*entity.UserWorkspaceOrganization, error) {
+	var userWorkspaceOrganizations *entity.UserWorkspaceOrganization
+
+	err := r.buildFilter(ctx, nil, filter).First(&userWorkspaceOrganizations).Error
+	return userWorkspaceOrganizations, err
+}
+
 func (r *userWorkspaceOrganizationRepository) FindByFilterForUpdate(
 	ctx context.Context,
 	data *repository.FindByFilterForUpdateParams,
 ) ([]entity.UserWorkspaceOrganization, error) {
-	filter, ok := data.Filter.(*repository.UserWorkspaceOrganizationFilter)
+	filter, ok := data.Filter.(*repository.FindUserWorkspaceOrganizationFilter)
 	if !ok {
 		return nil, errors.New("invalid argument")
 	}
@@ -101,7 +111,7 @@ func (r *userWorkspaceOrganizationRepository) FindByFilterForUpdate(
 func (r *userWorkspaceOrganizationRepository) buildFilter(
 	ctx context.Context,
 	tx *gorm.DB,
-	filter *repository.UserWorkspaceOrganizationFilter,
+	filter *repository.FindUserWorkspaceOrganizationFilter,
 ) *gorm.DB {
 	query := r.db.WithContext(ctx)
 	if tx != nil {

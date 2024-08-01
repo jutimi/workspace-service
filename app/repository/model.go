@@ -59,7 +59,7 @@ type FindOrganizationByFilter struct {
 	Level                *int
 }
 
-type UserWorkspaceOrganizationFilter struct {
+type FindUserWorkspaceOrganizationFilter struct {
 	ID               *uuid.UUID
 	IDs              []uuid.UUID
 	UserWorkspaceID  *uuid.UUID

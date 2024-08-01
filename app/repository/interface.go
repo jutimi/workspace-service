@@ -58,6 +58,7 @@ type UserWorkspaceOrganizationRepository interface {
 	Update(ctx context.Context, tx *gorm.DB, userWorkspaceOrganization *entity.UserWorkspaceOrganization) error
 	Delete(ctx context.Context, tx *gorm.DB, userWorkspaceOrganization *entity.UserWorkspaceOrganization) error
 	BulkCreate(ctx context.Context, tx *gorm.DB, userWorkspaceOrganizations []entity.UserWorkspaceOrganization) error
-	FindByFilter(ctx context.Context, filter *UserWorkspaceOrganizationFilter) ([]entity.UserWorkspaceOrganization, error)
+	FindByFilter(ctx context.Context, filter *FindUserWorkspaceOrganizationFilter) ([]entity.UserWorkspaceOrganization, error)
+	FindOneByFilter(ctx context.Context, filter *FindUserWorkspaceOrganizationFilter) (*entity.UserWorkspaceOrganization, error)
 	FindByFilterForUpdate(ctx context.Context, data *FindByFilterForUpdateParams) ([]entity.UserWorkspaceOrganization, error)
 }

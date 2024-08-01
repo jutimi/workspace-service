@@ -5,7 +5,6 @@ import (
 	"workspace-server/app/entity"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type UserWSHelper interface {
@@ -13,11 +12,10 @@ type UserWSHelper interface {
 }
 
 type OrganizationHelper interface {
-	generateParentOrganizationIds(parentOrganizationIds string, parentOrganizationId uuid.UUID) string
+	generateParentIds(parentOrganizationIds string, parentOrganizationId uuid.UUID) string
 	createUserWorkspaceOrganization(ctx context.Context, data *CreateUserWorkspaceOrganizationParams) error
-	validateParentOrganizationIds(ctx context.Context, tx *gorm.DB, parentOrganizationIds string) error
-	validateLeaderIds(ctx context.Context, tx *gorm.DB, leaderIds string) error
+	validateParentOrganizationIds(ctx context.Context, parentOrganizationIds string) error
 
 	CreateOrganization(ctx context.Context, data *CreateOrganizationParams) error
-	GetParentIds(parentIdStr string) []string
+	GetParentIds(parentIdStr string) []uuid.UUID
 }

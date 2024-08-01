@@ -18,7 +18,7 @@ type UserWorkspaceOrganization struct {
 	ID             uuid.UUID `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	OrganizationID uuid.UUID `json:"organization_id" gorm:"type:uuid;not null"`
 	Role           string    `json:"role" gorm:"type:varchar(20);not null"`
-	LeaderIDs      *string   `json:"leader_ids" gorm:"type:text"`
+	LeaderIDs      *string   `json:"leader_ids" gorm:"type:text"` // List ids of leader of user (user workspace id)
 	BaseUserWorkspace
 
 	// Relation

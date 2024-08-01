@@ -2,6 +2,7 @@ package helper
 
 import (
 	"workspace-server/app/entity"
+	"workspace-server/app/model"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -19,21 +20,18 @@ type CreateUserWsParams struct {
 type CreateOrganizationParams struct {
 	Tx                   *gorm.DB
 	WorkspaceID          uuid.UUID
-	ParentOrganizationId *uuid.UUID // Parent organization id
-	ParentLeaderId       *uuid.UUID // Leader of organization leader
+	ParentOrganizationId *uuid.UUID // Parent organization id (organization id)
+	ParentLeaderId       *uuid.UUID // Manager of organization leader (user workspace id)
 	Name                 string
-	Leader               *uuid.UUID
-	SubLeaders           []SubLeaderData
-}
-type SubLeaderData struct {
-	SubLeaderId uuid.UUID
-	MemberIds   []uuid.UUID
+	LeaderID             *uuid.UUID // Leader of organization (user workspace id)
+	SubLeaders           []model.SubLeaderData
 }
 
 type CreateUserWorkspaceOrganizationParams struct {
 	Tx               *gorm.DB
 	Organization     *entity.Organization
-	UserWorkspaceIds []uuid.UUID
-	LeaderIds        []uuid.UUID
+	UserWorkspaceIds []uuid.UUID // Member ids (user workspace ids)
+	LeaderId         *uuid.UUID  // Leader of members in current organization (user workspace id)
+	LeaderIds        string      // List ids of mangers of leader (user workspace ids)
 	Role             string
 }

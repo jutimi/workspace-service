@@ -18,8 +18,9 @@ type Organization struct {
 	Name                  string     `json:"name" gorm:"type:varchar(100);not null"`
 	NameSlug              string     `json:"name_slug" gorm:"type:varchar(100);not null"`
 	Level                 int        `json:"level" gorm:"type:int;not null"`
-	ParentOrganizationIDs *string    `json:"parent_organization_ids" gorm:"type:text"` // All parent organization ids
-	ParentOrganizationID  *uuid.UUID `json:"parent_organization_id" gorm:"type:uuid"`  // Last parent organization id
+	ParentOrganizationIDs *string    `json:"parent_organization_ids" gorm:"type:text"` // List ids of parent organization
+	ParentOrganizationID  *uuid.UUID `json:"parent_organization_id" gorm:"type:uuid"`  // Current parent organization
+	ManagerID             *uuid.UUID `json:"manager_id" gorm:"type:uuid"`              // Manager of leader of organization (user workspace id)
 	BaseWorkspace
 
 	// Relation

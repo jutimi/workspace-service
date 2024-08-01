@@ -30,13 +30,15 @@ const (
 	ErrCodeDuplicateWorkspaceName = 102
 
 	// User Workspace Errors
-	ErrCodeUserWorkspaceNotFound          = 110
-	ErrCodeUserWorkspaceNotInOrganization = 111
+	ErrCodeUserWorkspaceNotFound              = 110
+	ErrCodeUserWorkspaceNotInOrganization     = 111
+	ErrCodeUserWorkspaceAlreadyInOrganization = 112
 
 	// Organization Errors
-	ErrCodeOrganizationNotFound         = 120
-	ErrCodeInvalidParentOrganizationIds = 121
-	ErrCodeInvalidLeaderIds             = 122
+	ErrCodeOrganizationNotFound          = 120
+	ErrCodeInvalidParentOrganizationIds  = 121
+	ErrCodeInvalidLeaderIds              = 122
+	ErrCodeInvalidParentOrganizationData = 123
 
 	ErrCodeInternalServerError = 500
 	ErrCodeTimeout             = 408
@@ -87,6 +89,9 @@ var messages = map[int]map[string]string{
 	ErrCodeUserWorkspaceNotInOrganization: {
 		LangVN: "Nhân viên không thuộc phòng ban. Vui phải kiểm tra lại",
 	},
+	ErrCodeUserWorkspaceAlreadyInOrganization: {
+		LangVN: "Nhân viên đã thuộc phòng ban khác. Vui phải kiểm tra lại",
+	},
 
 	// Organization Error
 	ErrCodeOrganizationNotFound: {
@@ -97,6 +102,9 @@ var messages = map[int]map[string]string{
 	},
 	ErrCodeInvalidLeaderIds: {
 		LangVN: "Thông tin quản lý không hợp lệ. Vui phải kiểm tra lại",
+	},
+	ErrCodeInvalidParentOrganizationData: {
+		LangVN: "Thông tin phòng ban quản lý không hợp lệ. Vui phải kiểm tra lại",
 	},
 }
 
