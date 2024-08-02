@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"time"
+	"workspace-server/app/middleware"
 	"workspace-server/app/model"
 	"workspace-server/app/service"
 	_errors "workspace-server/package/errors"
@@ -14,13 +15,18 @@ import (
 )
 
 type userWorkspaceHandler struct {
-	services service.ServiceCollections
+	services   service.ServiceCollections
+	middleware middleware.MiddlewareCollections
 }
 
-func NewApiUserWorkspaceController(router *gin.Engine, services service.ServiceCollections) {
-	handler := userWorkspaceHandler{services}
+func NewApiUserWorkspaceController(
+	router *gin.Engine,
+	services service.ServiceCollections,
+	middleware middleware.MiddlewareCollections,
+) {
+	handler := userWorkspaceHandler{services, middleware}
 
-	group := router.Group("cms/v1/user-workspaces")
+	group := router.Group("cms/v1/user-workspaces", middleware.WorkspaceMW.Handler())
 	{
 		group.POST("/create", handler.create)
 		group.PUT("/update", handler.update)

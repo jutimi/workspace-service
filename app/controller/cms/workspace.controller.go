@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"time"
+	"workspace-server/app/middleware"
 	"workspace-server/app/model"
 	"workspace-server/app/service"
 	"workspace-server/utils"
@@ -15,13 +16,18 @@ import (
 )
 
 type workspaceHandler struct {
-	services service.ServiceCollections
+	services   service.ServiceCollections
+	middleware middleware.MiddlewareCollections
 }
 
-func NewApiWorkspaceController(router *gin.Engine, services service.ServiceCollections) {
-	handler := workspaceHandler{services}
+func NewApiWorkspaceController(
+	router *gin.Engine,
+	services service.ServiceCollections,
+	middleware middleware.MiddlewareCollections,
+) {
+	handler := workspaceHandler{services, middleware}
 
-	group := router.Group("api/v1/workspaces")
+	group := router.Group("api/v1/workspaces", middleware.WorkspaceMW.Handler())
 	{
 		group.PUT("/update", handler.update)
 	}

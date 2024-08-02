@@ -6,7 +6,7 @@ import (
 	"workspace-server/app/helper"
 	"workspace-server/app/model"
 	postgres_repository "workspace-server/app/repository/postgres"
-	client_grpc "workspace-server/grpc/client"
+	"workspace-server/grpc/client"
 	"workspace-server/package/database"
 	"workspace-server/package/errors"
 	"workspace-server/utils"
@@ -36,7 +36,7 @@ func (s *userWorkspaceService) CreateUserWorkspace(ctx context.Context, data *mo
 	}
 
 	// Create user account
-	clientGRPC := client_grpc.NewOAuthClient()
+	clientGRPC := client.NewOAuthClient()
 	defer clientGRPC.CloseConn()
 	user, err := clientGRPC.CreateUser(ctx, &oauth.CreateUserParams{
 		PhoneNumber: data.PhoneNumber,

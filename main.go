@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,10 +12,12 @@ import (
 	"time"
 	"workspace-server/app/controller"
 	"workspace-server/app/helper"
+	"workspace-server/app/middleware"
 	other_repository "workspace-server/app/repository/other"
 	postgres_repository "workspace-server/app/repository/postgres"
 	"workspace-server/app/service"
 	"workspace-server/config"
+	server "workspace-server/grpc"
 	"workspace-server/package/database"
 	logger "workspace-server/package/log"
 	_validator "workspace-server/package/validator"
@@ -23,6 +26,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/jutimi/grpc-service/workspace"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -37,6 +42,10 @@ func main() {
 	// Register Others
 	helpers := helper.RegisterHelpers(postgresRepo, repo)
 	services := service.RegisterServices(helpers, postgresRepo, repo)
+	middleware := middleware.RegisterMiddleware()
+
+	// Run GRPC Server
+	go startGRPCServer(conf, postgresRepo, helpers)
 
 	// Run gin server
 	gin.SetMode(conf.Server.Mode)
@@ -52,7 +61,7 @@ func main() {
 	router.GET("/health-check", func(c *gin.Context) {
 		c.String(200, "OK")
 	})
-	controller.RegisterControllers(router, services)
+	controller.RegisterControllers(router, services, middleware)
 
 	// Start server
 	srv := &http.Server{
@@ -99,4 +108,28 @@ func init() {
 	config.Init(configFile)
 	database.InitPostgres()
 	logger.Init()
+}
+
+func startGRPCServer(
+	conf *config.Configuration,
+
+	postgresRepo postgres_repository.PostgresRepositoryCollections,
+	helpers helper.HelperCollections,
+) {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", conf.GRPC.OAuthPort))
+	if err != nil {
+		panic(err)
+	}
+	opts := []grpc.ServerOption{}
+	grpcServer := grpc.NewServer(opts...)
+
+	// Register server
+	workspace.RegisterUserWorkspaceRouteServer(grpcServer, server.NewGRPCServer(postgresRepo, helpers))
+	workspace.RegisterWorkspaceRouteServer(grpcServer, server.NewGRPCServer(postgresRepo, helpers))
+
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("Error Init GRPC: %s", err.Error())
+	}
+
+	log.Println("Init GRPC Success!")
 }

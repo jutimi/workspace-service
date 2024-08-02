@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"time"
+	"workspace-server/app/middleware"
 	"workspace-server/app/model"
 	"workspace-server/app/service"
 	_errors "workspace-server/package/errors"
@@ -14,13 +15,18 @@ import (
 )
 
 type organizationHandler struct {
-	services service.ServiceCollections
+	services   service.ServiceCollections
+	middleware middleware.MiddlewareCollections
 }
 
-func NewApiOrganizationController(router *gin.Engine, services service.ServiceCollections) {
-	handler := organizationHandler{services}
+func NewApiOrganizationController(
+	router *gin.Engine,
+	services service.ServiceCollections,
+	middleware middleware.MiddlewareCollections,
+) {
+	handler := organizationHandler{services, middleware}
 
-	group := router.Group("cms/v1/organizations")
+	group := router.Group("cms/v1/organizations", middleware.WorkspaceMW.Handler())
 	{
 		group.PUT("/update", handler.update)
 		group.DELETE("/remove", handler.remove)
