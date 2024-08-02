@@ -3,13 +3,13 @@ package service
 import (
 	"context"
 
-	"github.com/jutimi/workspace-server/app/helper"
-	"github.com/jutimi/workspace-server/app/model"
-	"github.com/jutimi/workspace-server/app/repository"
-	postgres_repository "github.com/jutimi/workspace-server/app/repository/postgres"
-	"github.com/jutimi/workspace-server/package/database"
-	"github.com/jutimi/workspace-server/package/errors"
-	"github.com/jutimi/workspace-server/utils"
+	"workspace-server/app/helper"
+	"workspace-server/app/model"
+	"workspace-server/app/repository"
+	postgres_repository "workspace-server/app/repository/postgres"
+	"workspace-server/package/database"
+	"workspace-server/package/errors"
+	"workspace-server/utils"
 )
 
 type organizationService struct {

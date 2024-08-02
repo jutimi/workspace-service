@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jutimi/workspace-server/config"
+	"workspace-server/config"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

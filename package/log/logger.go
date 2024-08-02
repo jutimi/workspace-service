@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jutimi/workspace-server/utils"
+	"workspace-server/utils"
 
 	"github.com/sirupsen/logrus"
 )

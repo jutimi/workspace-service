@@ -3,8 +3,8 @@ package middleware
 import (
 	"net/http"
 
-	"github.com/jutimi/workspace-server/package/errors"
-	"github.com/jutimi/workspace-server/utils"
+	"workspace-server/package/errors"
+	"workspace-server/utils"
 
 	"strings"
 

@@ -3,7 +3,7 @@ package entity
 import (
 	"time"
 
-	"github.com/jutimi/workspace-server/utils"
+	"workspace-server/utils"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"

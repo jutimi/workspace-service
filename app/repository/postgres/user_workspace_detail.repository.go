@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/jutimi/workspace-server/app/entity"
-	"github.com/jutimi/workspace-server/app/repository"
+	"workspace-server/app/entity"
+	"workspace-server/app/repository"
 
 	"gorm.io/gorm"
 )

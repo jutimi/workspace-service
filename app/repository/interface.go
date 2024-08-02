@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/jutimi/workspace-server/app/entity"
+	"workspace-server/app/entity"
 
 	"gorm.io/gorm"
 )

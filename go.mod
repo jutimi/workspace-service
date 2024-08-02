@@ -1,4 +1,4 @@
-module github.com/jutimi/workspace-server
+module workspace-server
 
 go 1.22.4
 

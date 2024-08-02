@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/jutimi/workspace-server/config"
-	"github.com/jutimi/workspace-server/utils"
+	"workspace-server/config"
+	"workspace-server/utils"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

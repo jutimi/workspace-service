@@ -3,7 +3,7 @@ package postgres_repository
 import (
 	"fmt"
 
-	"github.com/jutimi/workspace-server/utils"
+	"workspace-server/utils"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"

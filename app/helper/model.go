@@ -1,8 +1,8 @@
 package helper
 
 import (
-	"github.com/jutimi/workspace-server/app/entity"
-	"github.com/jutimi/workspace-server/app/model"
+	"workspace-server/app/entity"
+	"workspace-server/app/model"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"

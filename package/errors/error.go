@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-playground/validator/v10"
 
-	logger "github.com/jutimi/workspace-server/package/log"
-	_validator "github.com/jutimi/workspace-server/package/validator"
+	logger "workspace-server/package/log"
+	_validator "workspace-server/package/validator"
 )
 
 type CustomError struct {

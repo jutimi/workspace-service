@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/jutimi/workspace-server/app/middleware"
-	"github.com/jutimi/workspace-server/app/model"
-	"github.com/jutimi/workspace-server/app/service"
-	_errors "github.com/jutimi/workspace-server/package/errors"
-	"github.com/jutimi/workspace-server/utils"
+	"workspace-server/app/middleware"
+	"workspace-server/app/model"
+	"workspace-server/app/service"
+	_errors "workspace-server/package/errors"
+	"workspace-server/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"

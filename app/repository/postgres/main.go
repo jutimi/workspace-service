@@ -1,7 +1,7 @@
 package postgres_repository
 
 import (
-	"github.com/jutimi/workspace-server/app/repository"
+	"workspace-server/app/repository"
 
 	"gorm.io/gorm"
 )

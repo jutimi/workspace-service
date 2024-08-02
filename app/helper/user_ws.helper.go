@@ -3,9 +3,9 @@ package helper
 import (
 	"context"
 
-	"github.com/jutimi/workspace-server/app/entity"
-	postgres_repository "github.com/jutimi/workspace-server/app/repository/postgres"
-	"github.com/jutimi/workspace-server/package/errors"
+	"workspace-server/app/entity"
+	postgres_repository "workspace-server/app/repository/postgres"
+	"workspace-server/package/errors"
 )
 
 type userWSHelper struct {
