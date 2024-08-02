@@ -3,7 +3,8 @@ package database
 import (
 	"fmt"
 	"log"
-	"workspace-server/config"
+
+	"github.com/jutimi/workspace-server/config"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

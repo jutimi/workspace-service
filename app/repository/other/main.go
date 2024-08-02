@@ -1,7 +1,7 @@
 package other_repository
 
 import (
-	"workspace-server/app/repository"
+	"github.com/jutimi/workspace-server/app/repository"
 )
 
 type OtherRepositoryCollections struct {

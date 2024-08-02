@@ -2,12 +2,13 @@ package server_grpc
 
 import (
 	"context"
-	"workspace-server/app/entity"
-	"workspace-server/app/helper"
-	"workspace-server/app/repository"
-	postgres_repository "workspace-server/app/repository/postgres"
-	"workspace-server/package/errors"
-	"workspace-server/utils"
+
+	"github.com/jutimi/workspace-server/app/entity"
+	"github.com/jutimi/workspace-server/app/helper"
+	"github.com/jutimi/workspace-server/app/repository"
+	postgres_repository "github.com/jutimi/workspace-server/app/repository/postgres"
+	"github.com/jutimi/workspace-server/package/errors"
+	"github.com/jutimi/workspace-server/utils"
 
 	"github.com/google/uuid"
 	grpc_utils "github.com/jutimi/grpc-service/utils"

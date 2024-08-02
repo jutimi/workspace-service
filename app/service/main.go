@@ -1,9 +1,9 @@
 package service
 
 import (
-	"workspace-server/app/helper"
-	other_repository "workspace-server/app/repository/other"
-	postgres_repository "workspace-server/app/repository/postgres"
+	"github.com/jutimi/workspace-server/app/helper"
+	other_repository "github.com/jutimi/workspace-server/app/repository/other"
+	postgres_repository "github.com/jutimi/workspace-server/app/repository/postgres"
 )
 
 type ServiceCollections struct {

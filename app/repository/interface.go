@@ -2,7 +2,8 @@ package repository
 
 import (
 	"context"
-	"workspace-server/app/entity"
+
+	"github.com/jutimi/workspace-server/app/entity"
 
 	"gorm.io/gorm"
 )

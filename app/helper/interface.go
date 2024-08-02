@@ -2,8 +2,9 @@ package helper
 
 import (
 	"context"
-	"workspace-server/app/entity"
-	"workspace-server/app/model"
+
+	"github.com/jutimi/workspace-server/app/entity"
+	"github.com/jutimi/workspace-server/app/model"
 
 	"github.com/google/uuid"
 )

@@ -2,7 +2,8 @@ package service
 
 import (
 	"context"
-	"workspace-server/app/model"
+
+	"github.com/jutimi/workspace-server/app/model"
 )
 
 type WorkspaceService interface {

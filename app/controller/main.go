@@ -1,10 +1,10 @@
 package controller
 
 import (
-	"workspace-server/app/controller/api"
-	"workspace-server/app/controller/cms"
-	"workspace-server/app/middleware"
-	"workspace-server/app/service"
+	"github.com/jutimi/workspace-server/app/controller/api"
+	"github.com/jutimi/workspace-server/app/controller/cms"
+	"github.com/jutimi/workspace-server/app/middleware"
+	"github.com/jutimi/workspace-server/app/service"
 
 	"github.com/gin-gonic/gin"
 )

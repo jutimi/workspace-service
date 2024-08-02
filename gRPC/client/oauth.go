@@ -3,8 +3,9 @@ package client_grpc
 import (
 	"context"
 	"log"
-	"workspace-server/config"
-	"workspace-server/package/errors"
+
+	"github.com/jutimi/workspace-server/config"
+	"github.com/jutimi/workspace-server/package/errors"
 
 	"github.com/jutimi/grpc-service/oauth"
 	"google.golang.org/grpc"

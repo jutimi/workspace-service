@@ -2,14 +2,15 @@ package service
 
 import (
 	"context"
-	"workspace-server/app/entity"
-	"workspace-server/app/helper"
-	"workspace-server/app/model"
-	postgres_repository "workspace-server/app/repository/postgres"
-	client_grpc "workspace-server/grpc/client"
-	"workspace-server/package/database"
-	"workspace-server/package/errors"
-	"workspace-server/utils"
+
+	"github.com/jutimi/workspace-server/app/entity"
+	"github.com/jutimi/workspace-server/app/helper"
+	"github.com/jutimi/workspace-server/app/model"
+	postgres_repository "github.com/jutimi/workspace-server/app/repository/postgres"
+	client_grpc "github.com/jutimi/workspace-server/grpc/client"
+	"github.com/jutimi/workspace-server/package/database"
+	"github.com/jutimi/workspace-server/package/errors"
+	"github.com/jutimi/workspace-server/utils"
 
 	"github.com/jutimi/grpc-service/oauth"
 )

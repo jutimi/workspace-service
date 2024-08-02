@@ -2,7 +2,8 @@ package other_repository
 
 import (
 	"context"
-	"workspace-server/app/repository"
+
+	"github.com/jutimi/workspace-server/app/repository"
 )
 
 type redisRepository struct {

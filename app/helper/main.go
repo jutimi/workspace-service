@@ -1,8 +1,8 @@
 package helper
 
 import (
-	other_repository "workspace-server/app/repository/other"
-	postgres_repository "workspace-server/app/repository/postgres"
+	other_repository "github.com/jutimi/workspace-server/app/repository/other"
+	postgres_repository "github.com/jutimi/workspace-server/app/repository/postgres"
 )
 
 type HelperCollections struct {

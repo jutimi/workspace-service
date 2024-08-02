@@ -7,7 +7,8 @@ import (
 	"reflect"
 	"strings"
 	"time"
-	"workspace-server/utils"
+
+	"github.com/jutimi/workspace-server/utils"
 
 	"github.com/sirupsen/logrus"
 )
