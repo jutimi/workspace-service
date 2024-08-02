@@ -20,7 +20,7 @@ type userWorkspaceHandler struct {
 func NewApiUserWorkspaceController(router *gin.Engine, services service.ServiceCollections) {
 	handler := userWorkspaceHandler{services}
 
-	group := router.Group("cms/v1/userWorkspaces")
+	group := router.Group("cms/v1/user-workspaces")
 	{
 		group.POST("/create", handler.create)
 		group.PUT("/update", handler.update)

@@ -20,7 +20,7 @@ type organizationHandler struct {
 func NewApiOrganizationController(router *gin.Engine, services service.ServiceCollections) {
 	handler := organizationHandler{services}
 
-	group := router.Group("api/v1/organizations")
+	group := router.Group("cms/v1/organizations")
 	{
 		group.PUT("/update", handler.update)
 		group.DELETE("/remove", handler.remove)
