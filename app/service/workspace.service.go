@@ -7,7 +7,7 @@ import (
 	"workspace-server/app/model"
 	"workspace-server/app/repository"
 	postgres_repository "workspace-server/app/repository/postgres"
-	"workspace-server/grpc/client"
+	client_grpc "workspace-server/grpc/client"
 	"workspace-server/package/database"
 	"workspace-server/package/errors"
 	"workspace-server/utils"
@@ -37,7 +37,7 @@ func (s *workspaceService) CreateWorkspace(
 ) (*model.CreateWorkspaceResponse, error) {
 	isActive := true
 	role := entity.ROLE_OWNER
-	clientGRPC := client.NewOAuthClient()
+	clientGRPC := client_grpc.NewOAuthClient()
 	defer clientGRPC.CloseConn()
 
 	// Get user payload from context
