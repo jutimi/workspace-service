@@ -27,6 +27,7 @@ type UserWorkspaceRepository interface {
 	FindByFilter(ctx context.Context, filter *FindUserWorkspaceByFilter) ([]entity.UserWorkspace, error)
 	BulkCreate(ctx context.Context, tx *gorm.DB, userWorkspaces []entity.UserWorkspace) error
 	CountByFilter(ctx context.Context, filter *FindUserWorkspaceByFilter) (int64, error)
+	InActiveByFilter(ctx context.Context, tx *gorm.DB, filter *FindUserWorkspaceByFilter) error
 }
 
 type UserWorkspaceDetailRepository interface {

@@ -43,9 +43,9 @@ func (h *organizationHelper) CreateOrganization(
 	organization.BaseWorkspace.WorkspaceID = data.WorkspaceID
 	organization.Level = entity.ORGANiZATION_LEVEL_ROOT
 	// Check parent organization
-	parentOrganizationData, err := h.validateOrganization(ctx, &validateOrganizationParams{
-		OrganizationId: data.ParentOrganizationId,
-		LeaderId:       data.ParentLeaderId,
+	parentOrganizationData, err := h.validateParentOrganization(ctx, &validateOrganizationParams{
+		ParentOrganizationId: data.ParentOrganizationId,
+		ParentLeaderId:       data.ParentLeaderId,
 	})
 	if err != nil {
 		return err
@@ -140,9 +140,9 @@ func (h *organizationHelper) UpdateOrganization(
 
 	// Update organization
 	// Check parent organization
-	parentOrganizationData, err := h.validateOrganization(ctx, &validateOrganizationParams{
-		OrganizationId: data.ParentOrganizationId,
-		LeaderId:       data.ParentLeaderId,
+	parentOrganizationData, err := h.validateParentOrganization(ctx, &validateOrganizationParams{
+		ParentOrganizationId: data.ParentOrganizationId,
+		ParentLeaderId:       data.ParentLeaderId,
 	})
 	if err != nil {
 		return err
@@ -340,22 +340,33 @@ func (h *organizationHelper) validateParentOrganizationIds(
 	return nil
 }
 
-func (h *organizationHelper) validateOrganization(
+/*
+Function validate parent organization. Rule:
+
+- Check exist both parent organization id and parent leader id
+
+- Check exist parent organization
+
+- Check exist user workspace
+
+- Check user workspace is in parent organization
+*/
+func (h *organizationHelper) validateParentOrganization(
 	ctx context.Context,
 	data *validateOrganizationParams,
 ) (*validateOrganizationResult, error) {
-	if (data.OrganizationId != nil && data.LeaderId == nil) ||
-		(data.OrganizationId == nil && data.LeaderId != nil) {
+	if (data.ParentOrganizationId != nil && data.ParentLeaderId == nil) ||
+		(data.ParentOrganizationId == nil && data.ParentLeaderId != nil) {
 		return nil, errors.New(errors.ErrCodeInvalidParentOrganizationData)
 	}
 
-	if data.OrganizationId == nil && data.LeaderId == nil {
+	if data.ParentOrganizationId == nil && data.ParentLeaderId == nil {
 		return nil, nil
 	}
 
 	// Get parent organization
 	organization, err := h.postgresRepo.OrganizationRepo.FindOneByFilter(ctx, &repository.FindOrganizationByFilter{
-		ID: data.OrganizationId,
+		ID: data.ParentOrganizationId,
 	})
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeOrganizationNotFound)
@@ -364,7 +375,7 @@ func (h *organizationHelper) validateOrganization(
 	// Get leader data
 	isActive := true
 	leader, err := h.postgresRepo.UserWorkspaceRepo.FindOneByFilter(ctx, &repository.FindUserWorkspaceByFilter{
-		ID:       data.LeaderId,
+		ID:       data.ParentLeaderId,
 		IsActive: &isActive,
 	})
 	if err != nil {
@@ -384,6 +395,13 @@ func (h *organizationHelper) validateOrganization(
 	}, nil
 }
 
+/*
+Function validate organization before update. Rule:
+
+- If organization has child, can only change organization name
+
+- If organization doesn't have child, can change any data
+*/
 func (h *organizationHelper) validateUpdateOrganization(
 	ctx context.Context,
 	data *UpdateOrganizationParams,
@@ -440,6 +458,11 @@ func (h *organizationHelper) validateUpdateOrganization(
 	return nil
 }
 
+/*
+Function validate duplicate user workspace. Rule:
+
+- Check user input have duplicate user workspace in 1 organization
+*/
 func (h *organizationHelper) validateDuplicateUserWorkspace(
 	leaderId *uuid.UUID,
 	subLeaders []model.SubLeaderData,

@@ -23,7 +23,7 @@ func NewApiWorkspaceController(router *gin.Engine, services service.ServiceColle
 
 	group := router.Group("api/v1/workspaces")
 	{
-		group.POST("/update", handler.update)
+		group.PUT("/update", handler.update)
 	}
 }
 

@@ -207,12 +207,22 @@ func (s *workspaceService) InactiveWorkspace(
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeWorkspaceNotFound)
 	}
+
+	// Update workspace inactive
 	workspace.IsActive = false
 	if err := s.postgresRepo.WorkspaceRepo.Update(ctx, tx, workspace); err != nil {
 		tx.Rollback()
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}
 	tx.Commit()
+
+	// Update user workspace inactive
+	if err := s.postgresRepo.UserWorkspaceRepo.InActiveByFilter(ctx, tx, &repository.FindUserWorkspaceByFilter{
+		WorkspaceID: &workspaceId,
+	}); err != nil {
+		tx.Rollback()
+		return nil, errors.New(errors.ErrCodeInternalServerError)
+	}
 
 	return &model.InactiveWorkspaceResponse{}, nil
 }

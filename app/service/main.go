@@ -9,6 +9,7 @@ import (
 type ServiceCollections struct {
 	WorkspaceSvc     WorkspaceService
 	UserWorkspaceSvc UserWorkspaceService
+	OrganizationSvc  OrganizationService
 }
 
 func RegisterServices(
@@ -20,5 +21,6 @@ func RegisterServices(
 	return ServiceCollections{
 		WorkspaceSvc:     NewWorkspaceService(helpers, postgresRepo),
 		UserWorkspaceSvc: NewUserWorkspaceService(helpers, postgresRepo),
+		OrganizationSvc:  NewOrganizationService(helpers, postgresRepo),
 	}
 }

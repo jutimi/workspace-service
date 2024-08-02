@@ -102,6 +102,15 @@ func (r *userWorkspaceRepository) CountByFilter(
 	return count, err
 }
 
+func (r *userWorkspaceRepository) InActiveByFilter(
+	ctx context.Context,
+	tx *gorm.DB,
+	filter *repository.FindUserWorkspaceByFilter,
+) error {
+	query := r.buildFilter(ctx, nil, filter)
+	return query.Model(entity.UserWorkspace{}).Updates(entity.UserWorkspace{IsActive: false}).Error
+}
+
 func (r *userWorkspaceRepository) buildFilter(
 	ctx context.Context,
 	tx *gorm.DB,

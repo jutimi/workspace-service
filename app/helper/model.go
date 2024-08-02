@@ -47,8 +47,8 @@ type UpdateOrganizationParams struct {
 }
 
 type validateOrganizationParams struct {
-	OrganizationId *uuid.UUID
-	LeaderId       *uuid.UUID
+	ParentOrganizationId *uuid.UUID
+	ParentLeaderId       *uuid.UUID
 }
 type validateOrganizationResult struct {
 	Organization              *entity.Organization
