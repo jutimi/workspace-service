@@ -11,11 +11,12 @@ CREATE TABLE workspaces (
     updated_at BIGINT
 );
 
+CREATE TYPE user_workspace_role AS ENUM ('admin', 'user', 'owner');
 CREATE TABLE user_workspaces (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     phone_number VARCHAR(20),
     email VARCHAR(100),
-    role enum('admin', 'user', 'owner'),
+    role user_workspace_role NOT NULL,
     is_active BOOLEAN DEFAULT true,
     user_id uuid NOT NULL,
     workspace_id uuid NOT NULL,
@@ -47,10 +48,11 @@ CREATE TABLE organizations (
     updated_at BIGINT
 );
 
+CREATE TYPE user_workspace_organization_role AS ENUM ('leader', 'sub_leader', 'member');
 CREATE TABLE user_workspace_organizations (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     organization_id uuid NOT NULL,
-    role enum('leader', 'sub_leader', 'member'),
+    role user_workspace_organization_role NOT NULL,
     leader_ids TEXT,
     user_workspace_id uuid NOT NULL,
     workspace_id uuid NOT NULL,
