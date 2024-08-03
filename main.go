@@ -18,7 +18,7 @@ import (
 	postgres_repository "workspace-server/app/repository/postgres"
 	"workspace-server/app/service"
 	"workspace-server/config"
-	server_grpc "workspace-server/grpc"
+	"workspace-server/external/server"
 	"workspace-server/package/database"
 	logger "workspace-server/package/log"
 	_validator "workspace-server/package/validator"
@@ -125,8 +125,8 @@ func startGRPCServer(
 	grpcServer := grpc.NewServer(opts...)
 
 	// Register server
-	workspace.RegisterUserWorkspaceRouteServer(grpcServer, server_grpc.NewGRPCServer(postgresRepo, helpers))
-	workspace.RegisterWorkspaceRouteServer(grpcServer, server_grpc.NewGRPCServer(postgresRepo, helpers))
+	workspace.RegisterUserWorkspaceRouteServer(grpcServer, server.NewGRPCServer(postgresRepo, helpers))
+	workspace.RegisterWorkspaceRouteServer(grpcServer, server.NewGRPCServer(postgresRepo, helpers))
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Error Init GRPC: %s", err.Error())
