@@ -8,7 +8,8 @@ CREATE TABLE workspaces (
     email VARCHAR(100) UNIQUE NOT NULL,
     is_active BOOLEAN DEFAULT true,
     created_at BIGINT,
-    updated_at BIGINT
+    updated_at BIGINT,
+    deleted_at BIGINT
 );
 
 CREATE TYPE user_workspace_role AS ENUM ('admin', 'user', 'owner');
@@ -21,7 +22,8 @@ CREATE TABLE user_workspaces (
     user_id uuid NOT NULL,
     workspace_id uuid NOT NULL,
     created_at BIGINT,
-    updated_at BIGINT
+    updated_at BIGINT,
+    deleted_at BIGINT
 );
 
 CREATE TABLE user_workspace_details (
@@ -32,7 +34,8 @@ CREATE TABLE user_workspace_details (
     user_workspace_id uuid NOT NULL,
     workspace_id uuid NOT NULL,
     created_at BIGINT,
-    updated_at BIGINT
+    updated_at BIGINT,
+    deleted_at BIGINT
 );
 
 CREATE TABLE organizations (
@@ -45,7 +48,8 @@ CREATE TABLE organizations (
     manager_id uuid,
     workspace_id uuid NOT NULL,
     created_at BIGINT,
-    updated_at BIGINT
+    updated_at BIGINT,
+    deleted_at BIGINT
 );
 
 CREATE TYPE user_workspace_organization_role AS ENUM ('leader', 'sub_leader', 'member');
@@ -57,5 +61,6 @@ CREATE TABLE user_workspace_organizations (
     user_workspace_id uuid NOT NULL,
     workspace_id uuid NOT NULL,
     created_at BIGINT,
-    updated_at BIGINT
+    updated_at BIGINT,
+    deleted_at BIGINT
 );
