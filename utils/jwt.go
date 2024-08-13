@@ -6,7 +6,8 @@ import (
 )
 
 type UserPayload struct {
-	ID uuid.UUID `json:"id"`
+	ID    uuid.UUID `json:"id"`
+	Scope string    `json:"scopes"`
 	jwt.RegisteredClaims
 }
 
@@ -20,14 +21,12 @@ type WorkspacePayload struct {
 
 // Get payload from user token
 func ParseUserToken(tokenString string) (*UserPayload, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &UserPayload{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(""), nil
-	})
+	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, &UserPayload{})
 	if err != nil {
 		return nil, err
 	}
 
-	if claims, ok := token.Claims.(*UserPayload); ok && token.Valid {
+	if claims, ok := token.Claims.(*UserPayload); ok {
 		return claims, nil
 	}
 
@@ -36,30 +35,12 @@ func ParseUserToken(tokenString string) (*UserPayload, error) {
 
 // Get payload from workspace token
 func ParseWSToken(tokenString string) (*WorkspacePayload, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &WorkspacePayload{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(""), nil
-	})
+	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, &WorkspacePayload{})
 	if err != nil {
 		return nil, err
 	}
 
-	if claims, ok := token.Claims.(*WorkspacePayload); ok && token.Valid {
-		return claims, nil
-	}
-
-	return nil, jwt.ErrTokenMalformed
-}
-
-// Get payload from user workspace token
-func ParseUserWSToken(tokenString string) (*WorkspacePayload, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &WorkspacePayload{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(""), nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	if claims, ok := token.Claims.(*WorkspacePayload); ok && token.Valid {
+	if claims, ok := token.Claims.(*WorkspacePayload); ok {
 		return claims, nil
 	}
 

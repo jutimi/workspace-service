@@ -31,7 +31,7 @@ func (s *organizationService) CreateOrganization(
 	ctx context.Context,
 	data *model.CreateOrganizationRequest,
 ) (*model.CreateOrganizationResponse, error) {
-	payload, err := utils.GetScopeContext[*utils.UserPayload](ctx, utils.USER_CONTEXT_KEY)
+	payload, err := utils.GetGinContext[*utils.UserPayload](ctx, string(utils.USER_CONTEXT_KEY))
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}

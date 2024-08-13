@@ -3,6 +3,9 @@ package utils
 import (
 	"context"
 	"errors"
+	"fmt"
+
+	"github.com/gin-gonic/gin"
 )
 
 func FormatSuccessResponse(data interface{}) map[string]interface{} {
@@ -19,11 +22,16 @@ func FormatErrorResponse(err error) map[string]interface{} {
 	}
 }
 
-func GetScopeContext[T string | *UserPayload | *WorkspacePayload](ctx context.Context, key key) (T, error) {
-	ctxData := ctx.Value(key)
+func GetGinContext[T *UserPayload | *WorkspacePayload](ctx context.Context, key string) (T, error) {
+	ginCtx := ctx.Value(GIN_CONTEXT_KEY).(*gin.Context)
+	ctxData, ok := ginCtx.Get(key)
+	if !ok {
+		return nil, errors.ErrUnsupported
+	}
+
 	data, ok := ctxData.(T)
 	if !ok {
-		return data, errors.ErrUnsupported
+		return nil, fmt.Errorf("invalid payload")
 	}
 
 	return data, nil

@@ -12,6 +12,7 @@ require (
 	github.com/jutimi/grpc-service v0.0.0-20240729102354-75656f5e0067
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.19.0
+	go.opentelemetry.io/otel v1.28.0
 	golang.org/x/crypto v0.25.0
 	google.golang.org/grpc v1.65.0
 	gorm.io/driver/mysql v1.5.7
@@ -27,7 +28,6 @@ require (
 	github.com/uptrace/opentelemetry-go-extra/otelsql v0.3.1 // indirect
 	github.com/uptrace/opentelemetry-go-extra/otelutil v0.3.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.52.0 // indirect
-	go.opentelemetry.io/otel v1.28.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.3.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.27.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.27.0 // indirect

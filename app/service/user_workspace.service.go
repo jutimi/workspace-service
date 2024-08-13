@@ -31,7 +31,7 @@ func NewUserWorkspaceService(
 }
 
 func (s *userWorkspaceService) CreateUserWorkspace(ctx context.Context, data *model.CreateUserWorkspaceRequest) (*model.CreateUserWorkspaceResponse, error) {
-	workspacePayload, err := utils.GetScopeContext[*utils.WorkspacePayload](ctx, utils.WORKSPACE_CONTEXT_KEY)
+	workspacePayload, err := utils.GetGinContext[*utils.WorkspacePayload](ctx, string(utils.WORKSPACE_CONTEXT_KEY))
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}

@@ -165,6 +165,8 @@ func convertValidatorTag(tag string) int {
 		return ErrCodeValidatorFormat
 	case _validator.EQUAL_FIELD:
 		return ErrCodeValidatorVerifiedData
+	case _validator.REQUIRED:
+		return ErrCodeValidatorRequired
 	default:
 		return ErrCodeValidatorRequired
 	}

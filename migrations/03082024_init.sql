@@ -25,6 +25,8 @@ CREATE TABLE user_workspaces (
     updated_at BIGINT,
     deleted_at BIGINT
 );
+CREATE UNIQUE INDEX uq_user_ws_email ON user_workspaces (email, workspace_id);
+CREATE UNIQUE INDEX uq_user_ws_phone_number ON user_workspaces (phone_number, workspace_id);
 
 CREATE TABLE user_workspace_details (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -51,6 +53,7 @@ CREATE TABLE organizations (
     updated_at BIGINT,
     deleted_at BIGINT
 );
+CREATE UNIQUE INDEX uq_organizations_name ON organizations (name_slug, workspace_id);
 
 CREATE TYPE user_workspace_organization_role AS ENUM ('leader', 'sub_leader', 'member');
 CREATE TABLE user_workspace_organizations (
