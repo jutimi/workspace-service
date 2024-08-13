@@ -32,7 +32,7 @@ func NewApiWorkspaceController(
 
 	group := router.Group("api/v1/workspaces")
 	{
-		group.POST("/create", handler.create, middleware.UserMW.Handler())
+		group.POST("/create", middleware.UserMW.Handler(), handler.create)
 	}
 }
 

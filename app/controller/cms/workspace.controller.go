@@ -31,7 +31,7 @@ func NewApiWorkspaceController(
 ) {
 	handler := workspaceHandler{tracer, middleware, services}
 
-	group := router.Group("api/v1/workspaces", middleware.WorkspaceMW.Handler())
+	group := router.Group("cms/v1/workspaces", middleware.WorkspaceMW.Handler())
 	{
 		group.PUT("/update", handler.update)
 	}
