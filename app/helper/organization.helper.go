@@ -34,7 +34,7 @@ func (h *organizationHelper) CreateOrganization(
 	leaderIds := ""
 
 	// Validate duplicate user workspace
-	if err := h.validateDuplicateUserWorkspace(data.LeaderID, data.SubLeaders); err != nil {
+	if err := h.validateDuplicateUserWorkspace(ctx, data.LeaderID, data.SubLeaders); err != nil {
 		return err
 	}
 
@@ -56,6 +56,7 @@ func (h *organizationHelper) CreateOrganization(
 		organization.Level = parentOrganizationData.Organization.Level + 1
 		organization.ParentOrganizationID = &parentOrganizationData.Organization.ID
 		parentOrganizationIds := h.generateParentIds(
+			ctx,
 			*parentOrganizationData.Organization.ParentOrganizationIDs,
 			parentOrganizationData.Organization.ID,
 		)
@@ -64,6 +65,7 @@ func (h *organizationHelper) CreateOrganization(
 
 		// Update leader ids list
 		leaderIds = h.generateParentIds(
+			ctx,
 			*parentOrganizationData.UserWorkspaceOrganization.LeaderIDs,
 			parentOrganizationData.UserWorkspaceOrganization.UserWorkspaceID,
 		)
@@ -92,6 +94,7 @@ func (h *organizationHelper) CreateOrganization(
 
 		// Update leader ids list
 		leaderIds = h.generateParentIds(
+			ctx,
 			leaderIds,
 			*data.LeaderID,
 		)
@@ -131,7 +134,7 @@ func (h *organizationHelper) UpdateOrganization(
 	}
 
 	// Validate duplicate user workspace
-	if err := h.validateDuplicateUserWorkspace(data.LeaderID, data.SubLeaders); err != nil {
+	if err := h.validateDuplicateUserWorkspace(ctx, data.LeaderID, data.SubLeaders); err != nil {
 		return err
 	}
 	// Validate organization before update
@@ -154,6 +157,7 @@ func (h *organizationHelper) UpdateOrganization(
 		data.Organization.Level = parentOrganizationData.Organization.Level + 1
 		data.Organization.ParentOrganizationID = &parentOrganizationData.Organization.ID
 		parentOrganizationIds := h.generateParentIds(
+			ctx,
 			*parentOrganizationData.Organization.ParentOrganizationIDs,
 			parentOrganizationData.Organization.ID,
 		)
@@ -162,6 +166,7 @@ func (h *organizationHelper) UpdateOrganization(
 
 		// Update leader ids list
 		leaderIds = h.generateParentIds(
+			ctx,
 			*parentOrganizationData.UserWorkspaceOrganization.LeaderIDs,
 			parentOrganizationData.UserWorkspaceOrganization.UserWorkspaceID,
 		)
@@ -198,6 +203,7 @@ func (h *organizationHelper) UpdateOrganization(
 
 		// Update leader ids list
 		leaderIds = h.generateParentIds(
+			ctx,
 			leaderIds,
 			*data.LeaderID,
 		)
@@ -230,6 +236,7 @@ Generate parent ids string (ex: 1/2/3/4)
 - parentId: current parent id (ex: 4)
 */
 func (h *organizationHelper) generateParentIds(
+	ctx context.Context,
 	parentIds string,
 	parentId uuid.UUID,
 ) string {
@@ -278,7 +285,7 @@ func (h *organizationHelper) createUserWorkspaceOrganization(
 	// Create user workspace organization
 	leaderIds := data.LeaderIds
 	if data.LeaderId != nil {
-		leaderIds = h.generateParentIds(data.LeaderIds, *data.LeaderId)
+		leaderIds = h.generateParentIds(ctx, data.LeaderIds, *data.LeaderId)
 	}
 	userWSOrganizations := make([]entity.UserWorkspaceOrganization, 0)
 	for _, userWSId := range data.UserWorkspaceIds {
@@ -465,6 +472,7 @@ Function validate duplicate user workspace. Rule:
 - Check user input have duplicate user workspace in 1 organization
 */
 func (h *organizationHelper) validateDuplicateUserWorkspace(
+	ctx context.Context,
 	leaderId *uuid.UUID,
 	subLeaders []model.SubLeaderData,
 ) error {

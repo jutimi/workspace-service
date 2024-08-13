@@ -42,7 +42,7 @@ func (s *workspaceService) CreateWorkspace(
 	defer clientGRPC.CloseConn()
 
 	// Get user payload from context
-	userPayload, err := utils.GetScopeContext[*utils.UserPayload](ctx, string(utils.USER_CONTEXT_KEY))
+	userPayload, err := utils.GetScopeContext[*utils.UserPayload](ctx, utils.USER_CONTEXT_KEY)
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}

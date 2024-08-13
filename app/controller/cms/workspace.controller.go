@@ -14,19 +14,22 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type workspaceHandler struct {
-	services   service.ServiceCollections
+	tracer     trace.Tracer
 	middleware middleware.MiddlewareCollections
+	services   service.ServiceCollections
 }
 
 func NewApiWorkspaceController(
 	router *gin.Engine,
-	services service.ServiceCollections,
+	tracer trace.Tracer,
 	middleware middleware.MiddlewareCollections,
+	services service.ServiceCollections,
 ) {
-	handler := workspaceHandler{services, middleware}
+	handler := workspaceHandler{tracer, middleware, services}
 
 	group := router.Group("api/v1/workspaces", middleware.WorkspaceMW.Handler())
 	{
@@ -43,8 +46,12 @@ func (h *workspaceHandler) update(c *gin.Context) {
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 	ctx = context.WithValue(ctx, utils.GIN_CONTEXT_KEY, c)
+	ctx, main := h.tracer.Start(ctx, "update-workspace")
+	defer func() {
+		cancel()
+		main.End()
+	}()
 
 	res, err := h.services.WorkspaceSvc.UpdateWorkspace(ctx, &data)
 	if err != nil {

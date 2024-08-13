@@ -28,11 +28,21 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"github.com/jutimi/grpc-service/workspace"
+	"github.com/uptrace/uptrace-go/uptrace"
+	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc"
 )
 
 func main() {
 	conf := config.GetConfiguration()
+
+	// Init uptrace
+	uptrace.ConfigureOpentelemetry(
+		uptrace.WithDSN(conf.Server.UptraceDNS),
+		uptrace.WithServiceName(conf.Server.ServiceName),
+		uptrace.WithServiceVersion("1.0.0"),
+	)
+	tracer := otel.Tracer(conf.Server.ServiceName)
 
 	// Register repositories
 	postgresDB := database.GetPostgres()
@@ -62,44 +72,42 @@ func main() {
 	router.GET("/health-check", func(c *gin.Context) {
 		c.String(200, "OK")
 	})
-	controller.RegisterControllers(router, services, middleware)
+	controller.RegisterControllers(router, tracer, middleware, services)
 
 	// Start server
+	srvErr := make(chan error, 1)
+	quit := make(chan os.Signal, 1)
+
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", conf.Server.Port),
 		Handler: router,
 	}
+	go func() {
+		srvErr <- srv.ListenAndServe()
+	}()
 
-	if !gin.IsDebugging() {
-		go func() {
-			// service connections
-			if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-				log.Fatalf("listen: %s\n", err)
-			}
-		}()
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutdown Server ...")
 
-		quit := make(chan os.Signal)
-		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-		<-quit
-		log.Println("Shutdown Server ...")
-
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		if err := srv.Shutdown(ctx); err != nil {
-			log.Fatal("Server Shutdown:", err)
-		}
-
-		// catching ctx.Done(). timeout of 5 seconds.
-		select {
-		case <-ctx.Done():
-			log.Println("timeout of 5 seconds.")
-		}
-		log.Println("Server exiting")
-	} else {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
-		}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer func() {
+		cancel()
+		uptrace.Shutdown(ctx)
+	}()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal("Server Shutdown:", err)
 	}
+
+	// catching ctx.Done(). timeout of 5 seconds.
+	select {
+	case <-srvErr:
+		// Error when starting HTTP server.
+		return
+	case <-ctx.Done():
+		log.Println("timeout of 5 seconds.")
+	}
+	log.Println("Server exiting")
 }
 
 func init() {
@@ -128,9 +136,9 @@ func startGRPCServer(
 	workspace.RegisterUserWorkspaceRouteServer(grpcServer, server.NewGRPCServer(postgresRepo, helpers))
 	workspace.RegisterWorkspaceRouteServer(grpcServer, server.NewGRPCServer(postgresRepo, helpers))
 
+	log.Println("Init GRPC Success!")
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Error Init GRPC: %s", err.Error())
 	}
 
-	log.Println("Init GRPC Success!")
 }

@@ -7,16 +7,18 @@ import (
 	"workspace-server/app/service"
 
 	"github.com/gin-gonic/gin"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func RegisterControllers(
 	router *gin.Engine,
-	services service.ServiceCollections,
+	tracer trace.Tracer,
 	middleware middleware.MiddlewareCollections,
+	services service.ServiceCollections,
 ) {
-	api.NewApiWorkspaceController(router, services, middleware)
+	api.NewApiWorkspaceController(router, tracer, middleware, services)
 
-	cms.NewApiOrganizationController(router, services, middleware)
-	cms.NewApiUserWorkspaceController(router, services, middleware)
-	cms.NewApiWorkspaceController(router, services, middleware)
+	cms.NewApiOrganizationController(router, tracer, middleware, services)
+	cms.NewApiUserWorkspaceController(router, tracer, middleware, services)
+	cms.NewApiWorkspaceController(router, tracer, middleware, services)
 }

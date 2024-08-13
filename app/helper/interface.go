@@ -14,12 +14,12 @@ type UserWSHelper interface {
 }
 
 type OrganizationHelper interface {
-	generateParentIds(parentOrganizationIds string, parentOrganizationId uuid.UUID) string
+	generateParentIds(ctx context.Context, parentOrganizationIds string, parentOrganizationId uuid.UUID) string
 	createUserWorkspaceOrganization(ctx context.Context, data *CreateUserWorkspaceOrganizationParams) error
 	validateParentOrganizationIds(ctx context.Context, parentOrganizationIds string) error
 	validateParentOrganization(ctx context.Context, data *validateOrganizationParams) (*validateOrganizationResult, error)
 	validateUpdateOrganization(ctx context.Context, data *UpdateOrganizationParams) error
-	validateDuplicateUserWorkspace(leaderId *uuid.UUID, subLeaders []model.SubLeaderData) error
+	validateDuplicateUserWorkspace(ctx context.Context, leaderId *uuid.UUID, subLeaders []model.SubLeaderData) error
 
 	CreateOrganization(ctx context.Context, data *CreateOrganizationParams) error
 	UpdateOrganization(ctx context.Context, data *UpdateOrganizationParams) error

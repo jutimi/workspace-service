@@ -13,19 +13,22 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type userWorkspaceHandler struct {
-	services   service.ServiceCollections
+	tracer     trace.Tracer
 	middleware middleware.MiddlewareCollections
+	services   service.ServiceCollections
 }
 
 func NewApiUserWorkspaceController(
 	router *gin.Engine,
-	services service.ServiceCollections,
+	tracer trace.Tracer,
 	middleware middleware.MiddlewareCollections,
+	services service.ServiceCollections,
 ) {
-	handler := userWorkspaceHandler{services, middleware}
+	handler := userWorkspaceHandler{tracer, middleware, services}
 
 	group := router.Group("cms/v1/user-workspaces", middleware.WorkspaceMW.Handler())
 	{
@@ -43,8 +46,12 @@ func (h *userWorkspaceHandler) create(c *gin.Context) {
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 	ctx = context.WithValue(ctx, utils.GIN_CONTEXT_KEY, c)
+	ctx, main := h.tracer.Start(ctx, "create-user-workspace")
+	defer func() {
+		cancel()
+		main.End()
+	}()
 
 	res, err := h.services.UserWorkspaceSvc.CreateUserWorkspace(ctx, &data)
 	if err != nil {
@@ -64,8 +71,12 @@ func (h *userWorkspaceHandler) update(c *gin.Context) {
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 	ctx = context.WithValue(ctx, utils.GIN_CONTEXT_KEY, c)
+	ctx, main := h.tracer.Start(ctx, "update-user-workspace")
+	defer func() {
+		cancel()
+		main.End()
+	}()
 
 	res, err := h.services.UserWorkspaceSvc.UpdateUserWorkspace(ctx, &data)
 	if err != nil {

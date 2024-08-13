@@ -9,6 +9,7 @@ import (
 	"workspace-server/config"
 	"workspace-server/utils"
 
+	"github.com/uptrace/opentelemetry-go-extra/otelgorm"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -49,6 +50,9 @@ func InitPostgres() {
 	})
 	if err != nil {
 		log.Fatalf("Error Connecting to Database: %s", err.Error())
+	}
+	if err := conn.Use(otelgorm.NewPlugin()); err != nil {
+		log.Fatalf("Error Use Database: %s", err.Error())
 	}
 
 	sqlDB, err := conn.DB()

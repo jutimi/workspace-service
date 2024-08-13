@@ -1,21 +1,22 @@
 package logger
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
-	"reflect"
-	"strings"
 	"time"
 
 	"workspace-server/utils"
 
 	"github.com/sirupsen/logrus"
+	"github.com/uptrace/opentelemetry-go-extra/otellogrus"
 )
 
 var logger *logrus.Logger
 
 type LogPrintln struct {
+	Ctx       context.Context
 	FileName  string
 	FuncName  string
 	TraceData string
@@ -38,9 +39,17 @@ func Init() {
 	if err != nil {
 		log.Fatalf("error_open_log_file: %v", err)
 	}
-
 	mw := io.MultiWriter(os.Stdout, file)
 	log.SetOutput(mw)
+
+	//
+	log.AddHook(otellogrus.NewHook(otellogrus.WithLevels(
+		logrus.PanicLevel,
+		logrus.FatalLevel,
+		logrus.ErrorLevel,
+		logrus.WarnLevel,
+		logrus.InfoLevel,
+	)))
 
 	logger = log
 }
@@ -50,13 +59,9 @@ func GetLogger() *logrus.Logger {
 }
 
 func Println(params LogPrintln) {
-	paramArr := make([]string, 0)
-	v := reflect.ValueOf(params)
-
-	for i := 0; i < v.NumField(); i++ {
-		if v.Field(i).Interface() != "" {
-			paramArr = append(paramArr, fmt.Sprintf("%v", v.Field(i).Interface()))
-		}
-	}
-	GetLogger().Infof("%s \n", strings.Join(paramArr, " - "))
+	GetLogger().WithContext(params.Ctx).WithFields(logrus.Fields{
+		"filename":   params.FileName,
+		"func_name":  params.FuncName,
+		"trace_data": params.TraceData,
+	}).Println(params.Msg)
 }

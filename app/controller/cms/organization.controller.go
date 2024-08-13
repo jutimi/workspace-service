@@ -13,19 +13,22 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type organizationHandler struct {
-	services   service.ServiceCollections
+	tracer     trace.Tracer
 	middleware middleware.MiddlewareCollections
+	services   service.ServiceCollections
 }
 
 func NewApiOrganizationController(
 	router *gin.Engine,
-	services service.ServiceCollections,
+	tracer trace.Tracer,
 	middleware middleware.MiddlewareCollections,
+	services service.ServiceCollections,
 ) {
-	handler := organizationHandler{services, middleware}
+	handler := organizationHandler{tracer, middleware, services}
 
 	group := router.Group("cms/v1/organizations", middleware.WorkspaceMW.Handler())
 	{
@@ -44,8 +47,12 @@ func (h *organizationHandler) update(c *gin.Context) {
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 	ctx = context.WithValue(ctx, utils.GIN_CONTEXT_KEY, c)
+	ctx, main := h.tracer.Start(ctx, "update-organization")
+	defer func() {
+		cancel()
+		main.End()
+	}()
 
 	res, err := h.services.OrganizationSvc.UpdateOrganization(ctx, &data)
 	if err != nil {
@@ -65,8 +72,12 @@ func (h *organizationHandler) create(c *gin.Context) {
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 	ctx = context.WithValue(ctx, utils.GIN_CONTEXT_KEY, c)
+	ctx, main := h.tracer.Start(ctx, "create-organization")
+	defer func() {
+		cancel()
+		main.End()
+	}()
 
 	res, err := h.services.OrganizationSvc.CreateOrganization(ctx, &data)
 	if err != nil {
@@ -86,8 +97,12 @@ func (h *organizationHandler) remove(c *gin.Context) {
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-	defer cancel()
 	ctx = context.WithValue(ctx, utils.GIN_CONTEXT_KEY, c)
+	ctx, main := h.tracer.Start(ctx, "remove-organization")
+	defer func() {
+		cancel()
+		main.End()
+	}()
 
 	res, err := h.services.OrganizationSvc.RemoveOrganization(ctx, &data)
 	if err != nil {
