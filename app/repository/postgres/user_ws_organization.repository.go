@@ -38,7 +38,7 @@ func (r *userWorkspaceOrganizationRepository) Update(
 	tx *gorm.DB,
 	userWorkspaceOrganization *entity.UserWorkspaceOrganization,
 ) error {
-	userWorkspaceOrganization.BaseUserWorkspace.UpdatedAt = time.Now().Unix()
+	userWorkspaceOrganization.UpdatedAt = time.Now().Unix()
 
 	if tx != nil {
 		return tx.WithContext(ctx).Save(&userWorkspaceOrganization).Error
@@ -73,21 +73,23 @@ func (r *userWorkspaceOrganizationRepository) BulkCreate(
 
 func (r *userWorkspaceOrganizationRepository) FindByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindUserWorkspaceOrganizationFilter,
 ) ([]entity.UserWorkspaceOrganization, error) {
 	var userWorkspaceOrganizations []entity.UserWorkspaceOrganization
 
-	err := r.buildFilter(ctx, nil, filter).Find(&userWorkspaceOrganizations).Error
+	err := r.buildFilter(ctx, tx, filter).Find(&userWorkspaceOrganizations).Error
 	return userWorkspaceOrganizations, err
 }
 
 func (r *userWorkspaceOrganizationRepository) FindOneByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindUserWorkspaceOrganizationFilter,
 ) (*entity.UserWorkspaceOrganization, error) {
 	var userWorkspaceOrganizations *entity.UserWorkspaceOrganization
 
-	err := r.buildFilter(ctx, nil, filter).First(&userWorkspaceOrganizations).Error
+	err := r.buildFilter(ctx, tx, filter).First(&userWorkspaceOrganizations).Error
 	return userWorkspaceOrganizations, err
 }
 

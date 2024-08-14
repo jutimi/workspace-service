@@ -29,6 +29,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/jutimi/grpc-service/workspace"
 	"github.com/uptrace/uptrace-go/uptrace"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc"
 )
@@ -125,11 +126,13 @@ func startGRPCServer(
 	postgresRepo postgres_repository.PostgresRepositoryCollections,
 	helpers helper.HelperCollections,
 ) {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", conf.GRPC.WorkspacePort))
+	lis, err := net.Listen("tcp", conf.GRPC.WorkspaceUrl)
 	if err != nil {
 		panic(err)
 	}
-	opts := []grpc.ServerOption{}
+	opts := []grpc.ServerOption{
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	}
 	grpcServer := grpc.NewServer(opts...)
 
 	// Register server

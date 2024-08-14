@@ -8,6 +8,7 @@ import (
 	"workspace-server/package/errors"
 
 	"github.com/jutimi/grpc-service/oauth"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -28,11 +29,12 @@ type OAuthClient interface {
 func NewOAuthClient() OAuthClient {
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	}
 	conf := config.GetConfiguration().GRPC
 
 	// Connect to Workspace grpc server
-	conn, err := grpc.NewClient(conf.OAuthPort, opts...)
+	conn, err := grpc.NewClient(conf.OAuthUrl, opts...)
 	if err != nil {
 		log.Fatalf("Error connect to OAuth grpc server: %s", err.Error())
 	}

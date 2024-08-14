@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"workspace-server/app/entity"
 	"workspace-server/app/helper"
@@ -11,6 +12,7 @@ import (
 	"workspace-server/external/client"
 	"workspace-server/package/database"
 	"workspace-server/package/errors"
+	logger "workspace-server/package/log"
 	"workspace-server/utils"
 
 	"github.com/jutimi/grpc-service/oauth"
@@ -55,32 +57,29 @@ func (s *workspaceService) CreateWorkspace(
 	if err != nil {
 		return nil, err
 	}
-	wsOwned, err := s.postgresRepo.UserWorkspaceRepo.CountByFilter(ctx, &repository.FindUserWorkspaceByFilter{
+	wsOwned, err := s.postgresRepo.UserWorkspaceRepo.CountByFilter(ctx, nil, &repository.FindUserWorkspaceByFilter{
 		Role:     &role,
 		IsActive: &isActive,
 	})
 	if err != nil {
+		logger.Println(logger.LogPrintln{
+			Ctx:       ctx,
+			FileName:  "app/service/workspace.service.go",
+			FuncName:  "CreateWorkspace",
+			TraceData: "",
+			Msg:       fmt.Sprintf("CountByFilter - %s", err.Error()),
+		})
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}
 	if wsOwned >= int64(user.Data.GetLimitWorkspace()) {
 		return nil, errors.New(errors.ErrCodePassedLimitWorkspace)
 	}
 
-	// Get email and phone number
-	email := user.Data.Email
-	phoneNumber := user.Data.PhoneNumber
-	if data.Email != nil && *data.Email != "" {
-		email = data.Email
-	}
-	if data.PhoneNumber != nil && *data.PhoneNumber != "" {
-		phoneNumber = data.PhoneNumber
-	}
-
 	// Begin create workspace
 	tx := database.BeginPostgresTransaction()
 	ws := entity.NewWorkspace()
-	ws.Email = *email
-	ws.PhoneNumber = *phoneNumber
+	ws.Email = data.Email
+	ws.PhoneNumber = data.PhoneNumber
 	ws.Address = data.Address
 
 	// Create workspace
@@ -130,7 +129,7 @@ func (s *workspaceService) UpdateWorkspace(
 	}
 
 	// Check duplicate workspace name
-	existedWS, err := s.postgresRepo.WorkspaceRepo.FindExistedByFilter(ctx, &repository.FindWorkspaceByFilter{
+	existedWS, err := s.postgresRepo.WorkspaceRepo.FindExistedByFilter(ctx, nil, &repository.FindWorkspaceByFilter{
 		ID:   &workspaceId,
 		Name: &data.Name,
 	})
@@ -153,12 +152,8 @@ func (s *workspaceService) UpdateWorkspace(
 	}
 
 	// Update workspace
-	if data.Email != nil && *data.Email != "" {
-		workspace.Email = *data.Email
-	}
-	if data.PhoneNumber != nil && *data.PhoneNumber != "" {
-		workspace.PhoneNumber = *data.PhoneNumber
-	}
+	workspace.Email = data.Email
+	workspace.PhoneNumber = data.PhoneNumber
 	if err := s.postgresRepo.WorkspaceRepo.Update(ctx, tx, workspace); err != nil {
 		tx.Rollback()
 		return nil, errors.New(errors.ErrCodeInternalServerError)

@@ -9,6 +9,6 @@ type Server struct {
 }
 
 type GRPC struct {
-	OAuthPort     string `mapstructure:"oauth_port"`
-	WorkspacePort string `mapstructure:"workspace_port"`
+	OAuthUrl     string `mapstructure:"oauth_url"`
+	WorkspaceUrl string `mapstructure:"workspace_url"`
 }

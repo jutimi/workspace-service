@@ -73,10 +73,11 @@ func (r *workspaceRepository) BulkCreate(
 
 func (r *workspaceRepository) FindOneByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindWorkspaceByFilter,
 ) (*entity.Workspace, error) {
 	var data *entity.Workspace
-	query := r.buildFilter(ctx, nil, filter)
+	query := r.buildFilter(ctx, tx, filter)
 
 	err := query.First(&data).Error
 	return data, err
@@ -84,10 +85,11 @@ func (r *workspaceRepository) FindOneByFilter(
 
 func (r *workspaceRepository) FindByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindWorkspaceByFilter,
 ) ([]entity.Workspace, error) {
 	var data []entity.Workspace
-	query := r.buildFilter(ctx, nil, filter)
+	query := r.buildFilter(ctx, tx, filter)
 
 	err := query.Find(&data).Error
 	return data, err
@@ -95,10 +97,11 @@ func (r *workspaceRepository) FindByFilter(
 
 func (r *workspaceRepository) CountByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindWorkspaceByFilter,
 ) (int64, error) {
 	var count int64
-	query := r.buildFilter(ctx, nil, filter)
+	query := r.buildFilter(ctx, tx, filter)
 
 	err := query.Count(&count).Error
 	return count, err
@@ -106,10 +109,11 @@ func (r *workspaceRepository) CountByFilter(
 
 func (r *workspaceRepository) FindExistedByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindWorkspaceByFilter,
 ) ([]entity.Workspace, error) {
 	var data []entity.Workspace
-	query := r.buildExistedFilter(ctx, nil, filter)
+	query := r.buildExistedFilter(ctx, tx, filter)
 
 	err := query.Find(&data).Error
 	return data, err

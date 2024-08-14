@@ -10,6 +10,7 @@ import (
 	"workspace-server/app/repository"
 	postgres_repository "workspace-server/app/repository/postgres"
 	"workspace-server/package/errors"
+	logger "workspace-server/package/log"
 	"workspace-server/utils"
 
 	"github.com/google/uuid"
@@ -41,7 +42,7 @@ func (h *organizationHelper) CreateOrganization(
 	// Create organization
 	organization := entity.NewOrganization()
 	organization.Name = data.Name
-	organization.BaseWorkspace.WorkspaceID = data.WorkspaceID
+	organization.WorkspaceID = data.WorkspaceID
 	organization.Level = entity.ORGANiZATION_LEVEL_ROOT
 	// Check parent organization
 	parentOrganizationData, err := h.validateParentOrganization(ctx, &validateOrganizationParams{
@@ -89,7 +90,7 @@ func (h *organizationHelper) CreateOrganization(
 				Tx:        data.Tx,
 			},
 		); err != nil {
-			return errors.New(errors.ErrCodeInternalServerError)
+			return err
 		}
 
 		// Update leader ids list
@@ -109,7 +110,7 @@ func (h *organizationHelper) CreateOrganization(
 				LeaderIds:        leaderIds,
 				Role:             entity.ORGANiZATION_ROLE_SUB_LEADER,
 			}); err != nil {
-				return errors.New(errors.ErrCodeInternalServerError)
+				return err
 			}
 		}
 	}
@@ -198,7 +199,7 @@ func (h *organizationHelper) UpdateOrganization(
 				Tx:        data.Tx,
 			},
 		); err != nil {
-			return errors.New(errors.ErrCodeInternalServerError)
+			return err
 		}
 
 		// Update leader ids list
@@ -218,7 +219,7 @@ func (h *organizationHelper) UpdateOrganization(
 				LeaderIds:        leaderIds,
 				Role:             entity.ORGANiZATION_ROLE_SUB_LEADER,
 			}); err != nil {
-				return errors.New(errors.ErrCodeInternalServerError)
+				return err
 			}
 		}
 	}
@@ -256,11 +257,18 @@ func (h *organizationHelper) createUserWorkspaceOrganization(
 	}
 
 	// Check user workspace data
-	userWS, err := h.postgresRepo.UserWorkspaceRepo.FindByFilter(ctx, &repository.FindUserWorkspaceByFilter{
+	userWS, err := h.postgresRepo.UserWorkspaceRepo.FindByFilter(ctx, data.Tx, &repository.FindUserWorkspaceByFilter{
 		IDs:      data.UserWorkspaceIds,
 		IsActive: &isActive,
 	})
 	if err != nil {
+		logger.Println(logger.LogPrintln{
+			Ctx:       ctx,
+			FileName:  "app/helper/organization.helper.go",
+			FuncName:  "createUserWorkspaceOrganization",
+			TraceData: "",
+			Msg:       fmt.Sprintf("FindByFilter - %s", err.Error()),
+		})
 		return errors.New(errors.ErrCodeInternalServerError)
 	}
 	if len(userWS) != len(data.UserWorkspaceIds) {
@@ -268,18 +276,20 @@ func (h *organizationHelper) createUserWorkspaceOrganization(
 	}
 
 	// Check user workspace in parent organization
-	parentOrganizationIds := h.GetParentIds(*data.Organization.ParentOrganizationIDs)
-	existedUserWSOrganization, err := h.postgresRepo.UserWorkspaceOrganizationRepo.FindByFilter(ctx, &repository.FindUserWorkspaceOrganizationFilter{
-		UserWorkspaceIDs: data.UserWorkspaceIds,
-		OrganizationIDs:  parentOrganizationIds,
-		Limit:            &limit,
-		Offset:           &offset,
-	})
-	if err != nil {
-		return errors.New(errors.ErrCodeInternalServerError)
-	}
-	if len(existedUserWSOrganization) > 0 {
-		return errors.New(errors.ErrCodeUserWorkspaceAlreadyInOrganization)
+	if data.Organization.ParentOrganizationIDs != nil {
+		parentOrganizationIds := h.GetParentIds(*data.Organization.ParentOrganizationIDs)
+		existedUserWSOrganization, err := h.postgresRepo.UserWorkspaceOrganizationRepo.FindByFilter(ctx, data.Tx, &repository.FindUserWorkspaceOrganizationFilter{
+			UserWorkspaceIDs: data.UserWorkspaceIds,
+			OrganizationIDs:  parentOrganizationIds,
+			Limit:            &limit,
+			Offset:           &offset,
+		})
+		if err != nil {
+			return errors.New(errors.ErrCodeInternalServerError)
+		}
+		if len(existedUserWSOrganization) > 0 {
+			return errors.New(errors.ErrCodeUserWorkspaceAlreadyInOrganization)
+		}
 	}
 
 	// Create user workspace organization
@@ -291,14 +301,14 @@ func (h *organizationHelper) createUserWorkspaceOrganization(
 	for _, userWSId := range data.UserWorkspaceIds {
 		userWorkspaceOrganization := entity.NewUserWorkspaceOrganization()
 		userWorkspaceOrganization.OrganizationID = data.Organization.ID
-		userWorkspaceOrganization.BaseUserWorkspace.WorkspaceID = data.Organization.WorkspaceID
-		userWorkspaceOrganization.BaseUserWorkspace.UserWorkspaceID = userWSId
+		userWorkspaceOrganization.WorkspaceID = data.Organization.WorkspaceID
+		userWorkspaceOrganization.UserWorkspaceID = userWSId
 		userWorkspaceOrganization.Role = data.Role
 		userWorkspaceOrganization.LeaderIDs = &leaderIds
 		userWSOrganizations = append(userWSOrganizations, *userWorkspaceOrganization)
 	}
 	if err := h.postgresRepo.UserWorkspaceOrganizationRepo.BulkCreate(ctx, data.Tx, userWSOrganizations); err != nil {
-		return err
+		return errors.New(errors.ErrCodeInternalServerError)
 	}
 
 	return nil
@@ -317,7 +327,7 @@ func (h *organizationHelper) validateParentOrganizationIds(
 	}
 
 	// Get organizations
-	organizations, err := h.postgresRepo.OrganizationRepo.FindByFilter(ctx, &repository.FindOrganizationByFilter{
+	organizations, err := h.postgresRepo.OrganizationRepo.FindByFilter(ctx, nil, &repository.FindOrganizationByFilter{
 		IDs: organizationIds,
 	})
 	if err != nil {
@@ -373,7 +383,7 @@ func (h *organizationHelper) validateParentOrganization(
 	}
 
 	// Get parent organization
-	organization, err := h.postgresRepo.OrganizationRepo.FindOneByFilter(ctx, &repository.FindOrganizationByFilter{
+	organization, err := h.postgresRepo.OrganizationRepo.FindOneByFilter(ctx, nil, &repository.FindOrganizationByFilter{
 		ID: data.ParentOrganizationId,
 	})
 	if err != nil {
@@ -382,14 +392,14 @@ func (h *organizationHelper) validateParentOrganization(
 
 	// Get leader data
 	isActive := true
-	leader, err := h.postgresRepo.UserWorkspaceRepo.FindOneByFilter(ctx, &repository.FindUserWorkspaceByFilter{
+	leader, err := h.postgresRepo.UserWorkspaceRepo.FindOneByFilter(ctx, nil, &repository.FindUserWorkspaceByFilter{
 		ID:       data.ParentLeaderId,
 		IsActive: &isActive,
 	})
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeUserWorkspaceNotFound)
 	}
-	leaderOrganization, err := h.postgresRepo.UserWorkspaceOrganizationRepo.FindOneByFilter(ctx, &repository.FindUserWorkspaceOrganizationFilter{
+	leaderOrganization, err := h.postgresRepo.UserWorkspaceOrganizationRepo.FindOneByFilter(ctx, nil, &repository.FindUserWorkspaceOrganizationFilter{
 		UserWorkspaceID: &leader.ID,
 		OrganizationID:  &organization.ID,
 	})
@@ -417,7 +427,7 @@ func (h *organizationHelper) validateUpdateOrganization(
 	limit := 1
 	offset := 0
 	// Check existed child organization
-	existedChildOrganization, err := h.postgresRepo.OrganizationRepo.FindByFilter(ctx, &repository.FindOrganizationByFilter{
+	existedChildOrganization, err := h.postgresRepo.OrganizationRepo.FindByFilter(ctx, nil, &repository.FindOrganizationByFilter{
 		ParentOrganizationID: &data.Organization.ID,
 		Limit:                &limit,
 		Offset:               &offset,
@@ -447,7 +457,7 @@ func (h *organizationHelper) validateUpdateOrganization(
 		userWorkspaceIds = append(userWorkspaceIds, subLeader.MemberIds...)
 	}
 
-	userWSOrganizations, err := h.postgresRepo.UserWorkspaceOrganizationRepo.FindByFilter(ctx, &repository.FindUserWorkspaceOrganizationFilter{
+	userWSOrganizations, err := h.postgresRepo.UserWorkspaceOrganizationRepo.FindByFilter(ctx, nil, &repository.FindUserWorkspaceOrganizationFilter{
 		OrganizationID: &data.Organization.ID,
 	})
 	if err != nil {

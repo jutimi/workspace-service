@@ -25,7 +25,9 @@ type UserWorkspace struct {
 	Role        string    `json:"role" gorm:"type:enum('admin','user', 'owner');"`
 	IsActive    bool      `json:"is_active" gorm:"default:true;type:bool;not null"`
 	UserID      uuid.UUID `json:"user_id" gorm:"type:uuid;not null"`
-	BaseWorkspace
+	WorkspaceID uuid.UUID `json:"workspace_id" gorm:"type:uuid;not null"`
+	CreatedAt   int64     `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt   int64     `json:"updated_at" gorm:"autoUpdateTime:milli"`
 
 	// Relation
 	Workspace           Workspace           `gorm:"foreignKey:workspace_id;references:id"`
@@ -34,10 +36,8 @@ type UserWorkspace struct {
 
 func NewUserWorkspace() *UserWorkspace {
 	return &UserWorkspace{
-		BaseWorkspace: BaseWorkspace{
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
-		},
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
 	}
 }
 

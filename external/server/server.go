@@ -68,7 +68,7 @@ func (s *grpcServer) GetWorkspaceByFilter(ctx context.Context, data *workspace.G
 		ids = append(ids, convertId)
 	}
 
-	ws, err := s.postgresRepo.WorkspaceRepo.FindOneByFilter(ctx, &repository.FindWorkspaceByFilter{
+	ws, err := s.postgresRepo.WorkspaceRepo.FindOneByFilter(ctx, nil, &repository.FindWorkspaceByFilter{
 		ID:       &id,
 		IsActive: data.IsActive,
 		IDs:      ids,
@@ -110,7 +110,7 @@ func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *workspa
 		}, nil
 	}
 
-	userWs, err := s.postgresRepo.UserWorkspaceRepo.FindOneByFilter(ctx, filter)
+	userWs, err := s.postgresRepo.UserWorkspaceRepo.FindOneByFilter(ctx, nil, filter)
 	if err != nil {
 		customErr = errors.New(errors.ErrCodeUserWorkspaceNotFound)
 		return &workspace.UserWorkspaceResponse{
@@ -155,7 +155,7 @@ func (s *grpcServer) GetUserWorkspacesByFilter(ctx context.Context, data *worksp
 		}, nil
 	}
 
-	userWs, err := s.postgresRepo.UserWorkspaceRepo.FindByFilter(ctx, filter)
+	userWs, err := s.postgresRepo.UserWorkspaceRepo.FindByFilter(ctx, nil, filter)
 	if err != nil {
 		customErr = errors.New(errors.ErrCodeUserWorkspaceNotFound)
 		return &workspace.UserWorkspacesResponse{

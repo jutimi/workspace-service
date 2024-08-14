@@ -2,9 +2,9 @@ package model
 
 type CreateWorkspaceRequest struct {
 	Name        string  `json:"name" validate:"required"`
-	PhoneNumber *string `json:"phone_number"`
+	PhoneNumber string  `json:"phone_number" validate:"required,phone_number"`
 	Address     *string `json:"address"`
-	Email       *string `json:"email"`
+	Email       string  `json:"email" validate:"required,email"`
 }
 type CreateWorkspaceResponse struct{}
 

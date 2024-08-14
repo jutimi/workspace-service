@@ -38,7 +38,7 @@ func (r *organizationRepository) Update(
 	tx *gorm.DB,
 	organization *entity.Organization,
 ) error {
-	organization.BaseWorkspace.UpdatedAt = time.Now().Unix()
+	organization.UpdatedAt = time.Now().Unix()
 
 	if tx != nil {
 		return tx.WithContext(ctx).Save(&organization).Error
@@ -61,10 +61,11 @@ func (r *organizationRepository) Delete(
 
 func (r *organizationRepository) FindOneByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindOrganizationByFilter,
 ) (*entity.Organization, error) {
 	var data *entity.Organization
-	query := r.buildFilter(ctx, nil, filter)
+	query := r.buildFilter(ctx, tx, filter)
 
 	err := query.First(&data).Error
 	return data, err
@@ -72,10 +73,11 @@ func (r *organizationRepository) FindOneByFilter(
 
 func (r *organizationRepository) FindByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindOrganizationByFilter,
 ) ([]entity.Organization, error) {
 	var data []entity.Organization
-	query := r.buildFilter(ctx, nil, filter)
+	query := r.buildFilter(ctx, tx, filter)
 
 	err := query.Find(&data).Error
 	return data, err
@@ -83,13 +85,14 @@ func (r *organizationRepository) FindByFilter(
 
 func (r *organizationRepository) FindExistedByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindOrganizationByFilter,
 ) (
 	[]entity.Organization,
 	error,
 ) {
 	var data []entity.Organization
-	query := r.buildExistedFilter(ctx, nil, filter)
+	query := r.buildExistedFilter(ctx, tx, filter)
 
 	err := query.Find(&data).Error
 	return data, err

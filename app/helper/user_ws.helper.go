@@ -22,7 +22,7 @@ func NewUserWSHelper(
 
 func (h *userWSHelper) CreateUserWS(ctx context.Context, data *CreateUserWsParams) (*entity.UserWorkspace, error) {
 	userWS := entity.NewUserWorkspace()
-	userWS.BaseWorkspace.WorkspaceID = data.WorkspaceID
+	userWS.WorkspaceID = data.WorkspaceID
 	userWS.UserID = data.UserID
 	userWS.Email = data.Email
 	userWS.PhoneNumber = data.PhoneNumber

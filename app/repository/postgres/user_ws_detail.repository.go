@@ -37,7 +37,7 @@ func (r *userWorkspaceDetailRepository) Update(
 	tx *gorm.DB,
 	userWorkspaceDetail *entity.UserWorkspaceDetail,
 ) error {
-	userWorkspaceDetail.BaseUserWorkspace.UpdatedAt = time.Now().Unix()
+	userWorkspaceDetail.UpdatedAt = time.Now().Unix()
 
 	if tx != nil {
 		return tx.WithContext(ctx).Save(&userWorkspaceDetail).Error

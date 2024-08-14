@@ -37,7 +37,7 @@ func (r *userWorkspaceRepository) Update(
 	tx *gorm.DB,
 	userWorkspace *entity.UserWorkspace,
 ) error {
-	userWorkspace.BaseWorkspace.UpdatedAt = time.Now().Unix()
+	userWorkspace.UpdatedAt = time.Now().Unix()
 
 	if tx != nil {
 		return tx.WithContext(ctx).Save(&userWorkspace).Error
@@ -72,10 +72,11 @@ func (r *userWorkspaceRepository) BulkCreate(
 
 func (r *userWorkspaceRepository) FindOneByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindUserWorkspaceByFilter,
 ) (*entity.UserWorkspace, error) {
 	var data *entity.UserWorkspace
-	query := r.buildFilter(ctx, nil, filter)
+	query := r.buildFilter(ctx, tx, filter)
 
 	err := query.First(&data).Error
 	return data, err
@@ -83,10 +84,11 @@ func (r *userWorkspaceRepository) FindOneByFilter(
 
 func (r *userWorkspaceRepository) FindByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindUserWorkspaceByFilter,
 ) ([]entity.UserWorkspace, error) {
 	var data []entity.UserWorkspace
-	query := r.buildFilter(ctx, nil, filter)
+	query := r.buildFilter(ctx, tx, filter)
 
 	err := query.Find(&data).Error
 	return data, err
@@ -94,12 +96,13 @@ func (r *userWorkspaceRepository) FindByFilter(
 
 func (r *userWorkspaceRepository) CountByFilter(
 	ctx context.Context,
+	tx *gorm.DB,
 	filter *repository.FindUserWorkspaceByFilter,
 ) (int64, error) {
 	var count int64
-	query := r.buildFilter(ctx, nil, filter)
+	query := r.buildFilter(ctx, tx, filter)
 
-	err := query.Count(&count).Error
+	err := query.Model(&entity.UserWorkspace{}).Count(&count).Error
 	return count, err
 }
 
@@ -144,7 +147,7 @@ func (r *userWorkspaceRepository) buildFilter(
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
 	}
 	if filter.Role != nil {
-		query = query.Scopes(findByString(*filter.Email, "email"))
+		query = query.Scopes(findByString(*filter.Role, "role"))
 	}
 
 	// Relation query

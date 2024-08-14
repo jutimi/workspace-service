@@ -22,7 +22,9 @@ type Organization struct {
 	ParentOrganizationIDs *string    `json:"parent_organization_ids" gorm:"type:text"` // List ids of parent organization
 	ParentOrganizationID  *uuid.UUID `json:"parent_organization_id" gorm:"type:uuid"`  // Current parent organization
 	ManagerID             *uuid.UUID `json:"manager_id" gorm:"type:uuid"`              // Manager of leader of organization (user workspace id)
-	BaseWorkspace
+	WorkspaceID           uuid.UUID  `json:"workspace_id" gorm:"type:uuid;not null"`
+	CreatedAt             int64      `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt             int64      `json:"updated_at" gorm:"autoUpdateTime:milli"`
 
 	// Relation
 	Workspace Workspace `gorm:"foreignKey:workspace_id;references:id"`
@@ -30,10 +32,8 @@ type Organization struct {
 
 func NewOrganization() *Organization {
 	return &Organization{
-		BaseWorkspace: BaseWorkspace{
-			CreatedAt: time.Now().Unix(),
-			UpdatedAt: time.Now().Unix(),
-		},
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
 	}
 }
 

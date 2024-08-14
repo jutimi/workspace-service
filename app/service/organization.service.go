@@ -67,7 +67,7 @@ func (s *organizationService) UpdateOrganization(
 	data *model.UpdateOrganizationRequest,
 ) (*model.UpdateOrganizationResponse, error) {
 	// Check organization
-	organization, err := s.postgresRepo.OrganizationRepo.FindOneByFilter(ctx, &repository.FindOrganizationByFilter{
+	organization, err := s.postgresRepo.OrganizationRepo.FindOneByFilter(ctx, nil, &repository.FindOrganizationByFilter{
 		ID: &data.Id,
 	})
 	if err != nil {
@@ -107,7 +107,7 @@ func (s *organizationService) RemoveOrganization(
 	offset := 0
 
 	// Check organization
-	organization, err := s.postgresRepo.OrganizationRepo.FindOneByFilter(ctx, &repository.FindOrganizationByFilter{
+	organization, err := s.postgresRepo.OrganizationRepo.FindOneByFilter(ctx, nil, &repository.FindOrganizationByFilter{
 		ID: &data.Id,
 	})
 	if err != nil {
@@ -115,7 +115,7 @@ func (s *organizationService) RemoveOrganization(
 	}
 
 	// Check existed child organization
-	existedChildOrganization, err := s.postgresRepo.OrganizationRepo.FindByFilter(ctx, &repository.FindOrganizationByFilter{
+	existedChildOrganization, err := s.postgresRepo.OrganizationRepo.FindByFilter(ctx, nil, &repository.FindOrganizationByFilter{
 		ParentOrganizationID: &data.Id,
 		Limit:                &limit,
 		Offset:               &offset,
