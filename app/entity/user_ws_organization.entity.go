@@ -15,12 +15,12 @@ const (
 
 type UserWorkspaceOrganization struct {
 	gorm.Model
-	ID              uuid.UUID `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
-	OrganizationID  uuid.UUID `json:"organization_id" gorm:"type:uuid;not null"`
+	Id              uuid.UUID `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	OrganizationId  uuid.UUID `json:"organization_id" gorm:"type:uuid;not null"`
 	Role            string    `json:"role" gorm:"type:varchar(20);not null"`
-	LeaderIDs       *string   `json:"leader_ids" gorm:"type:text"` // List ids of leader of user (user workspace id)
-	UserWorkspaceID uuid.UUID `json:"user_workspace_id" gorm:"type:uuid;not null"`
-	WorkspaceID     uuid.UUID `json:"workspace_id" gorm:"type:uuid;not null"`
+	LeaderIds       *string   `json:"leader_ids" gorm:"type:text"` // List ids of leader of user (user workspace id)
+	UserWorkspaceId uuid.UUID `json:"user_workspace_id" gorm:"type:uuid;not null"`
+	WorkspaceId     uuid.UUID `json:"workspace_id" gorm:"type:uuid;not null"`
 	CreatedAt       int64     `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt       int64     `json:"updated_at" gorm:"autoUpdateTime:milli"`
 

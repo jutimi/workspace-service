@@ -6,16 +6,16 @@ import (
 )
 
 type UserPayload struct {
-	ID    uuid.UUID `json:"id"`
+	Id    uuid.UUID `json:"id"`
 	Scope string    `json:"scopes"`
 	jwt.RegisteredClaims
 }
 
 type WorkspacePayload struct {
-	ID              uuid.UUID `json:"id"`
+	Id              uuid.UUID `json:"id"`
 	Scope           string    `json:"scopes"`
-	WorkspaceID     uuid.UUID `json:"workspace_id"`
-	UserWorkspaceID uuid.UUID `json:"user_workspace_id"`
+	WorkspaceId     uuid.UUID `json:"workspace_id"`
+	UserWorkspaceId uuid.UUID `json:"user_workspace_id"`
 	jwt.RegisteredClaims
 }
 

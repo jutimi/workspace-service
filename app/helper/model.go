@@ -10,8 +10,8 @@ import (
 
 type CreateUserWsParams struct {
 	Tx          *gorm.DB
-	UserID      uuid.UUID
-	WorkspaceID uuid.UUID
+	UserId      uuid.UUID
+	WorkspaceId uuid.UUID
 	PhoneNumber *string
 	Email       *string
 	Role        string
@@ -19,11 +19,11 @@ type CreateUserWsParams struct {
 
 type CreateOrganizationParams struct {
 	Tx                   *gorm.DB
-	WorkspaceID          uuid.UUID
+	WorkspaceId          uuid.UUID
 	ParentOrganizationId *uuid.UUID // Parent organization id (organization id)
 	ParentLeaderId       *uuid.UUID // Manager of organization leader (user workspace id)
 	Name                 string
-	LeaderID             *uuid.UUID // Leader of organization (user workspace id)
+	LeaderId             *uuid.UUID // Leader of organization (user workspace id)
 	SubLeaders           []model.SubLeaderData
 }
 
@@ -42,7 +42,7 @@ type UpdateOrganizationParams struct {
 	ParentOrganizationId *uuid.UUID // Parent organization id (organization id)
 	ParentLeaderId       *uuid.UUID // Manager of organization leader (user workspace id)
 	Name                 string
-	LeaderID             *uuid.UUID // Leader of organization (user workspace id)
+	LeaderId             *uuid.UUID // Leader of organization (user workspace id)
 	SubLeaders           []model.SubLeaderData
 }
 

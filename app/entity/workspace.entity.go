@@ -11,7 +11,7 @@ import (
 
 type Workspace struct {
 	gorm.Model
-	ID          uuid.UUID `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	Id          uuid.UUID `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	Name        string    `json:"name" gorm:"type:varchar(100);not null"`
 	NameSlug    string    `json:"name_slug" gorm:"type:varchar(100);not null"`
 	PhoneNumber string    `json:"phone_number" gorm:"type:varchar(20);unique;not null"`

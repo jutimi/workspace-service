@@ -44,10 +44,10 @@ func (s *organizationService) CreateOrganization(
 
 	if err := s.helpers.OrganizationHelper.CreateOrganization(ctx, &helper.CreateOrganizationParams{
 		Tx:                   tx,
-		WorkspaceID:          payload.ID,
+		WorkspaceId:          payload.Id,
 		ParentOrganizationId: data.ParentOrganizationId,
 		ParentLeaderId:       data.ParentOrganizationLeaderId,
-		LeaderID:             data.LeaderId,
+		LeaderId:             data.LeaderId,
 		Name:                 data.Name,
 		SubLeaders:           nil,
 	}); err != nil {
@@ -68,7 +68,7 @@ func (s *organizationService) UpdateOrganization(
 ) (*model.UpdateOrganizationResponse, error) {
 	// Check organization
 	organization, err := s.postgresRepo.OrganizationRepo.FindOneByFilter(ctx, nil, &repository.FindOrganizationByFilter{
-		ID: &data.Id,
+		Id: &data.Id,
 	})
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeOrganizationNotFound)
@@ -85,7 +85,7 @@ func (s *organizationService) UpdateOrganization(
 		Organization:         organization,
 		ParentOrganizationId: data.ParentOrganizationId,
 		ParentLeaderId:       data.ParentOrganizationLeaderId,
-		LeaderID:             data.LeaderId,
+		LeaderId:             data.LeaderId,
 		Name:                 data.Name,
 	}); err != nil {
 		tx.Rollback()
@@ -108,7 +108,7 @@ func (s *organizationService) RemoveOrganization(
 
 	// Check organization
 	organization, err := s.postgresRepo.OrganizationRepo.FindOneByFilter(ctx, nil, &repository.FindOrganizationByFilter{
-		ID: &data.Id,
+		Id: &data.Id,
 	})
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeOrganizationNotFound)
@@ -116,7 +116,7 @@ func (s *organizationService) RemoveOrganization(
 
 	// Check existed child organization
 	existedChildOrganization, err := s.postgresRepo.OrganizationRepo.FindByFilter(ctx, nil, &repository.FindOrganizationByFilter{
-		ParentOrganizationID: &data.Id,
+		ParentOrganizationId: &data.Id,
 		Limit:                &limit,
 		Offset:               &offset,
 	})
@@ -135,7 +135,7 @@ func (s *organizationService) RemoveOrganization(
 
 	// Remove user workspace organization
 	if err := s.postgresRepo.UserWorkspaceOrganizationRepo.DeleteByFilter(ctx, tx, &repository.FindUserWorkspaceOrganizationFilter{
-		OrganizationID: &data.Id,
+		OrganizationId: &data.Id,
 	}); err != nil {
 		tx.Rollback()
 		return nil, errors.New(errors.ErrCodeInternalServerError)

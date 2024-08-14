@@ -131,11 +131,11 @@ func (r *userWorkspaceRepository) buildFilter(
 	if filter.PhoneNumber != nil && *filter.PhoneNumber != "" {
 		query = query.Scopes(findByText(*filter.PhoneNumber, "phone_number"))
 	}
-	if filter.ID != nil {
-		query = query.Scopes(findByString(*filter.ID, "id"))
+	if filter.Id != nil {
+		query = query.Scopes(findByString(*filter.Id, "id"))
 	}
-	if filter.IDs != nil && len(filter.IDs) > 0 {
-		query = query.Scopes(findBySlice(filter.IDs, "id"))
+	if filter.Ids != nil && len(filter.Ids) > 0 {
+		query = query.Scopes(findBySlice(filter.Ids, "id"))
 	}
 	if filter.Emails != nil && len(filter.Emails) > 0 {
 		query = query.Scopes(findBySlice(filter.Emails, "email"))

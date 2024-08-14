@@ -15,14 +15,14 @@ const (
 
 type Organization struct {
 	gorm.Model
-	ID                    uuid.UUID  `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
+	Id                    uuid.UUID  `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	Name                  string     `json:"name" gorm:"type:varchar(100);not null"`
 	NameSlug              string     `json:"name_slug" gorm:"type:varchar(100);not null"`
 	Level                 int        `json:"level" gorm:"type:int;not null"`
-	ParentOrganizationIDs *string    `json:"parent_organization_ids" gorm:"type:text"` // List ids of parent organization
-	ParentOrganizationID  *uuid.UUID `json:"parent_organization_id" gorm:"type:uuid"`  // Current parent organization
-	ManagerID             *uuid.UUID `json:"manager_id" gorm:"type:uuid"`              // Manager of leader of organization (user workspace id)
-	WorkspaceID           uuid.UUID  `json:"workspace_id" gorm:"type:uuid;not null"`
+	ParentOrganizationIds *string    `json:"parent_organization_ids" gorm:"type:text"` // List ids of parent organization
+	ParentOrganizationId  *uuid.UUID `json:"parent_organization_id" gorm:"type:uuid"`  // Current parent organization
+	ManagerId             *uuid.UUID `json:"manager_id" gorm:"type:uuid"`              // Manager of leader of organization (user workspace id)
+	WorkspaceId           uuid.UUID  `json:"workspace_id" gorm:"type:uuid;not null"`
 	CreatedAt             int64      `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt             int64      `json:"updated_at" gorm:"autoUpdateTime:milli"`
 

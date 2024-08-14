@@ -50,7 +50,7 @@ func (s *workspaceService) CreateWorkspace(
 	}
 
 	// Get user data and check limit workspace
-	userId := userPayload.ID.String()
+	userId := userPayload.Id.String()
 	user, err := clientGRPC.GetUserByFilter(ctx, &oauth.GetUserByFilterParams{
 		Id: &userId,
 	})
@@ -81,6 +81,7 @@ func (s *workspaceService) CreateWorkspace(
 	ws.Email = data.Email
 	ws.PhoneNumber = data.PhoneNumber
 	ws.Address = data.Address
+	ws.Name = data.Name
 
 	// Create workspace
 	if err := s.postgresRepo.WorkspaceRepo.Create(ctx, tx, ws); err != nil {
@@ -90,11 +91,11 @@ func (s *workspaceService) CreateWorkspace(
 	// Create user workspace
 	userWS, err := s.helpers.UserWSHelper.CreateUserWS(ctx, &helper.CreateUserWsParams{
 		Tx:          tx,
-		UserID:      userPayload.ID,
+		UserId:      userPayload.Id,
 		Email:       user.Data.Email,
 		PhoneNumber: user.Data.PhoneNumber,
 		Role:        entity.ROLE_OWNER,
-		WorkspaceID: ws.ID,
+		WorkspaceId: ws.Id,
 	})
 	if err != nil {
 		tx.Rollback()
@@ -103,10 +104,10 @@ func (s *workspaceService) CreateWorkspace(
 	// Create organization
 	if err := s.helpers.OrganizationHelper.CreateOrganization(ctx, &helper.CreateOrganizationParams{
 		Tx:                   tx,
-		WorkspaceID:          ws.ID,
+		WorkspaceId:          ws.Id,
 		ParentOrganizationId: nil,
 		ParentLeaderId:       nil,
-		LeaderID:             &userWS.ID,
+		LeaderId:             &userWS.Id,
 		Name:                 data.Name,
 		SubLeaders:           nil,
 	}); err != nil {
@@ -123,14 +124,14 @@ func (s *workspaceService) UpdateWorkspace(
 	ctx context.Context,
 	data *model.UpdateWorkspaceRequest,
 ) (*model.UpdateWorkspaceResponse, error) {
-	workspaceId, err := utils.ConvertStringToUUID(data.ID)
+	workspaceId, err := utils.ConvertStringToUUID(data.Id)
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}
 
 	// Check duplicate workspace name
 	existedWS, err := s.postgresRepo.WorkspaceRepo.FindExistedByFilter(ctx, nil, &repository.FindWorkspaceByFilter{
-		ID:   &workspaceId,
+		Id:   &workspaceId,
 		Name: &data.Name,
 	})
 	if err != nil {
@@ -143,7 +144,7 @@ func (s *workspaceService) UpdateWorkspace(
 	tx := database.BeginPostgresTransaction()
 	// Find workspace
 	workspace, err := s.postgresRepo.WorkspaceRepo.FindOneByFilterForUpdate(ctx, &repository.FindByFilterForUpdateParams{
-		Filter:     &repository.FindWorkspaceByFilter{ID: &workspaceId},
+		Filter:     &repository.FindWorkspaceByFilter{Id: &workspaceId},
 		LockOption: clause.LockingOptionsNoWait,
 		Tx:         tx,
 	})
@@ -154,6 +155,7 @@ func (s *workspaceService) UpdateWorkspace(
 	// Update workspace
 	workspace.Email = data.Email
 	workspace.PhoneNumber = data.PhoneNumber
+	workspace.Name = data.Name
 	if err := s.postgresRepo.WorkspaceRepo.Update(ctx, tx, workspace); err != nil {
 		tx.Rollback()
 		return nil, errors.New(errors.ErrCodeInternalServerError)
@@ -163,7 +165,7 @@ func (s *workspaceService) UpdateWorkspace(
 	level := entity.ORGANiZATION_LEVEL_ROOT
 	organization, err := s.postgresRepo.OrganizationRepo.FindOneByFilterForUpdate(ctx, &repository.FindByFilterForUpdateParams{
 		Filter: &repository.FindOrganizationByFilter{
-			WorkspaceID: &workspaceId,
+			WorkspaceId: &workspaceId,
 			Level:       &level,
 		},
 		LockOption: clause.LockingOptionsNoWait,
@@ -188,7 +190,7 @@ func (s *workspaceService) InactiveWorkspace(
 	ctx context.Context,
 	data *model.InactiveWorkspaceRequest,
 ) (*model.InactiveWorkspaceResponse, error) {
-	workspaceId, err := utils.ConvertStringToUUID(data.ID)
+	workspaceId, err := utils.ConvertStringToUUID(data.Id)
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}
@@ -196,7 +198,7 @@ func (s *workspaceService) InactiveWorkspace(
 	tx := database.BeginPostgresTransaction()
 	// Find workspace
 	workspace, err := s.postgresRepo.WorkspaceRepo.FindOneByFilterForUpdate(ctx, &repository.FindByFilterForUpdateParams{
-		Filter:     &repository.FindWorkspaceByFilter{ID: &workspaceId},
+		Filter:     &repository.FindWorkspaceByFilter{Id: &workspaceId},
 		LockOption: clause.LockingOptionsNoWait,
 		Tx:         tx,
 	})
@@ -214,7 +216,7 @@ func (s *workspaceService) InactiveWorkspace(
 
 	// Update user workspace inactive
 	if err := s.postgresRepo.UserWorkspaceRepo.InActiveByFilter(ctx, tx, &repository.FindUserWorkspaceByFilter{
-		WorkspaceID: &workspaceId,
+		WorkspaceId: &workspaceId,
 	}); err != nil {
 		tx.Rollback()
 		return nil, errors.New(errors.ErrCodeInternalServerError)

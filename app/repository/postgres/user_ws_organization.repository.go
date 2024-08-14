@@ -130,17 +130,17 @@ func (r *userWorkspaceOrganizationRepository) buildFilter(
 		query = tx.WithContext(ctx)
 	}
 
-	if filter.ID != nil {
-		query = query.Scopes(findByString(*filter.ID, "id"))
+	if filter.Id != nil {
+		query = query.Scopes(findByString(*filter.Id, "id"))
 	}
-	if filter.IDs != nil && len(filter.IDs) > 0 {
-		query = query.Scopes(findBySlice(filter.IDs, "id"))
+	if filter.Ids != nil && len(filter.Ids) > 0 {
+		query = query.Scopes(findBySlice(filter.Ids, "id"))
 	}
 	if filter.Limit != nil && filter.Offset != nil {
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
 	}
-	if filter.LeaderIDs != nil && len(*filter.LeaderIDs) > 0 {
-		query = query.Scopes(findByText(*filter.LeaderIDs, "leader_ids"))
+	if filter.LeaderIds != nil && len(*filter.LeaderIds) > 0 {
+		query = query.Scopes(findByText(*filter.LeaderIds, "leader_ids"))
 	}
 
 	// Relation query

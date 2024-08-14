@@ -59,8 +59,8 @@ func (s *userWorkspaceService) CreateUserWorkspace(ctx context.Context, data *mo
 
 	userWS := entity.NewUserWorkspace()
 	userWS.Role = entity.ROLE_USER
-	userWS.WorkspaceID = workspacePayload.WorkspaceID
-	userWS.UserID = userId
+	userWS.WorkspaceId = workspacePayload.WorkspaceId
+	userWS.UserId = userId
 	userWS.Email = data.Email
 	userWS.PhoneNumber = data.PhoneNumber
 	if err := s.postgresRepo.UserWorkspaceRepo.Create(ctx, tx, userWS); err != nil {

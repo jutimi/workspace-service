@@ -12,11 +12,11 @@ type FindByFilterForUpdateParams struct {
 }
 
 type FindWorkspaceByFilter struct {
-	ID           *uuid.UUID
+	Id           *uuid.UUID
 	IsActive     *bool
 	Email        *string
 	PhoneNumber  *string
-	IDs          []uuid.UUID
+	Ids          []uuid.UUID
 	Emails       []string
 	PhoneNumbers []string
 	Limit        *int
@@ -25,12 +25,12 @@ type FindWorkspaceByFilter struct {
 }
 
 type FindUserWorkspaceByFilter struct {
-	ID           *uuid.UUID
-	IDs          []uuid.UUID
-	WorkspaceID  *uuid.UUID
-	WorkspaceIDs []uuid.UUID
-	UserID       *uuid.UUID
-	UserIDs      []uuid.UUID
+	Id           *uuid.UUID
+	Ids          []uuid.UUID
+	WorkspaceId  *uuid.UUID
+	WorkspaceIds []uuid.UUID
+	UserId       *uuid.UUID
+	UserIds      []uuid.UUID
 	IsActive     *bool
 	Email        *string
 	PhoneNumber  *string
@@ -49,30 +49,30 @@ type FindUserWorkspaceByFilter struct {
 }
 
 type FindOrganizationByFilter struct {
-	ID                       *uuid.UUID
-	IDs                      []uuid.UUID
-	WorkspaceID              *uuid.UUID
-	ParentOrganizationID     *uuid.UUID
+	Id                       *uuid.UUID
+	Ids                      []uuid.UUID
+	WorkspaceId              *uuid.UUID
+	ParentOrganizationId     *uuid.UUID
 	Name                     *string
 	Limit                    *int
 	Offset                   *int
 	Level                    *int
-	ParentOrganizationIDsStr *string
+	ParentOrganizationIdsStr *string
 }
 
 type FindUserWorkspaceOrganizationFilter struct {
-	ID               *uuid.UUID
-	IDs              []uuid.UUID
-	UserWorkspaceID  *uuid.UUID
-	UserWorkspaceIDs []uuid.UUID
-	WorkspaceID      *uuid.UUID
-	WorkspaceIDs     []uuid.UUID
-	OrganizationID   *uuid.UUID
-	OrganizationIDs  []uuid.UUID
+	Id               *uuid.UUID
+	Ids              []uuid.UUID
+	UserWorkspaceId  *uuid.UUID
+	UserWorkspaceIds []uuid.UUID
+	WorkspaceId      *uuid.UUID
+	WorkspaceIds     []uuid.UUID
+	OrganizationId   *uuid.UUID
+	OrganizationIds  []uuid.UUID
 	Role             *string
 	Limit            *int
 	Offset           *int
-	LeaderIDs        *string
+	LeaderIds        *string
 
 	// Include option
 	IsIncludeOrganization bool // Left join organization

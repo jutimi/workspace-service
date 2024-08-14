@@ -143,14 +143,14 @@ func (r *organizationRepository) buildFilter(
 		query = tx.WithContext(ctx)
 	}
 
-	if filter.ID != nil {
-		query = query.Scopes(findByString(*filter.ID, "id"))
+	if filter.Id != nil {
+		query = query.Scopes(findByString(*filter.Id, "id"))
 	}
-	if filter.ParentOrganizationID != nil {
-		query = query.Scopes(findByString(*filter.ParentOrganizationID, "parent_organization_id"))
+	if filter.ParentOrganizationId != nil {
+		query = query.Scopes(findByString(*filter.ParentOrganizationId, "parent_organization_id"))
 	}
-	if filter.IDs != nil && len(filter.IDs) > 0 {
-		query = query.Scopes(findBySlice(filter.IDs, "id"))
+	if filter.Ids != nil && len(filter.Ids) > 0 {
+		query = query.Scopes(findBySlice(filter.Ids, "id"))
 	}
 	if filter.Name != nil {
 		query = query.Scopes(findByName(*filter.Name, "name_slug"))
@@ -158,14 +158,14 @@ func (r *organizationRepository) buildFilter(
 	if filter.Limit != nil && filter.Offset != nil {
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
 	}
-	if filter.WorkspaceID != nil {
-		query = query.Scopes(findByString(*filter.WorkspaceID, "workspace_id"))
+	if filter.WorkspaceId != nil {
+		query = query.Scopes(findByString(*filter.WorkspaceId, "workspace_id"))
 	}
 	if filter.Level != nil {
 		query = query.Scopes(findByString(*filter.Level, "level"))
 	}
-	if filter.ParentOrganizationIDsStr != nil && len(*filter.ParentOrganizationIDsStr) > 0 {
-		query = query.Scopes(findByText(*filter.ParentOrganizationIDsStr, "parent_organization_ids"))
+	if filter.ParentOrganizationIdsStr != nil && len(*filter.ParentOrganizationIdsStr) > 0 {
+		query = query.Scopes(findByText(*filter.ParentOrganizationIdsStr, "parent_organization_ids"))
 	}
 
 	return query
@@ -181,11 +181,11 @@ func (r *organizationRepository) buildExistedFilter(
 		query = tx.WithContext(ctx)
 	}
 
-	if filter.ID != nil {
-		query = query.Scopes(excludeByString(*filter.ID, "id"))
+	if filter.Id != nil {
+		query = query.Scopes(excludeByString(*filter.Id, "id"))
 	}
-	if filter.IDs != nil && len(filter.IDs) > 0 {
-		query = query.Scopes(excludeBySlice(filter.IDs, "id"))
+	if filter.Ids != nil && len(filter.Ids) > 0 {
+		query = query.Scopes(excludeBySlice(filter.Ids, "id"))
 	}
 	if filter.Limit != nil && filter.Offset != nil {
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))

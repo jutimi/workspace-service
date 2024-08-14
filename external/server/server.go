@@ -69,9 +69,9 @@ func (s *grpcServer) GetWorkspaceByFilter(ctx context.Context, data *workspace.G
 	}
 
 	ws, err := s.postgresRepo.WorkspaceRepo.FindOneByFilter(ctx, nil, &repository.FindWorkspaceByFilter{
-		ID:       &id,
+		Id:       &id,
 		IsActive: data.IsActive,
-		IDs:      ids,
+		Ids:      ids,
 	})
 	if err != nil {
 		customErr = errors.New(errors.ErrCodeWorkspaceNotFound)
@@ -88,7 +88,7 @@ func (s *grpcServer) GetWorkspaceByFilter(ctx context.Context, data *workspace.G
 	return &workspace.WorkspaceResponse{
 		Success: true,
 		Data: &workspace.WorkspaceDetail{
-			Id:   ws.ID.String(),
+			Id:   ws.Id.String(),
 			Name: ws.Name,
 		},
 		Error: nil,
@@ -126,14 +126,14 @@ func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *workspa
 	return &workspace.UserWorkspaceResponse{
 		Success: true,
 		Data: &workspace.UserWorkspaceDetail{
-			Id:          userWs.ID.String(),
+			Id:          userWs.Id.String(),
 			Name:        userWs.UserWorkspaceDetail.Name,
 			Email:       *userWs.Email,
 			PhoneNumber: *userWs.PhoneNumber,
 			IsActive:    userWs.IsActive,
 			Role:        convertUserWSRole(userWs.Role),
-			WorkspaceId: userWs.WorkspaceID.String(),
-			UserId:      userWs.UserID.String(),
+			WorkspaceId: userWs.WorkspaceId.String(),
+			UserId:      userWs.UserId.String(),
 		},
 		Error: nil,
 	}, nil
@@ -170,14 +170,14 @@ func (s *grpcServer) GetUserWorkspacesByFilter(ctx context.Context, data *worksp
 
 	for _, user := range userWs {
 		userWSRes = append(userWSRes, &workspace.UserWorkspaceDetail{
-			Id:          user.ID.String(),
+			Id:          user.Id.String(),
 			Name:        user.UserWorkspaceDetail.Name,
 			Email:       *user.Email,
 			PhoneNumber: *user.PhoneNumber,
 			IsActive:    user.IsActive,
 			Role:        convertUserWSRole(user.Role),
-			WorkspaceId: user.WorkspaceID.String(),
-			UserId:      user.UserID.String(),
+			WorkspaceId: user.WorkspaceId.String(),
+			UserId:      user.UserId.String(),
 		})
 	}
 
@@ -248,12 +248,12 @@ func convertUserParamsToFilter(data *workspace.GetUserWorkspaceByFilterParams) (
 	}
 
 	return &repository.FindUserWorkspaceByFilter{
-		ID:              &id,
-		IDs:             ids,
-		WorkspaceID:     &workspaceId,
-		WorkspaceIDs:    workspaceIds,
-		UserID:          &userId,
-		UserIDs:         userIds,
+		Id:              &id,
+		Ids:             ids,
+		WorkspaceId:     &workspaceId,
+		WorkspaceIds:    workspaceIds,
+		UserId:          &userId,
+		UserIds:         userIds,
 		IsActive:        data.IsActive,
 		Limit:           &limit,
 		Offset:          &offset,

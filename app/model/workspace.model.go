@@ -9,12 +9,12 @@ type CreateWorkspaceRequest struct {
 type CreateWorkspaceResponse struct{}
 
 type UpdateWorkspaceRequest struct {
-	ID string `query:"id" validate:"required"`
+	Id string `query:"id" validate:"required"`
 	CreateWorkspaceRequest
 }
 type UpdateWorkspaceResponse struct{}
 
 type InactiveWorkspaceRequest struct {
-	ID string `query:"id" validate:"required"`
+	Id string `query:"id" validate:"required"`
 }
 type InactiveWorkspaceResponse struct{}

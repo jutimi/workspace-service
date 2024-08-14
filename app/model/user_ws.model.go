@@ -11,7 +11,7 @@ type CreateUserWorkspaceRequest struct {
 type CreateUserWorkspaceResponse struct{}
 
 type UpdateUserWorkspaceRequest struct {
-	UserWorkspaceID uuid.UUID `json:"user_workspace_id" validate:"required"`
+	UserWorkspaceId uuid.UUID `json:"user_workspace_id" validate:"required"`
 	CreateUserWorkspaceRequest
 }
 type UpdateUserWorkspaceResponse struct{}
