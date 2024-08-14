@@ -8,29 +8,29 @@ import (
 	"workspace-server/package/errors"
 )
 
-type userWSHelper struct {
+type userWorkspaceHelper struct {
 	postgresRepo postgres_repository.PostgresRepositoryCollections
 }
 
-func NewUserWSHelper(
+func NewUserWorkspaceHelper(
 	postgresRepo postgres_repository.PostgresRepositoryCollections,
-) UserWSHelper {
-	return &userWSHelper{
+) UserWorkspaceHelper {
+	return &userWorkspaceHelper{
 		postgresRepo: postgresRepo,
 	}
 }
 
-func (h *userWSHelper) CreateUserWS(ctx context.Context, data *CreateUserWsParams) (*entity.UserWorkspace, error) {
-	userWS := entity.NewUserWorkspace()
-	userWS.WorkspaceId = data.WorkspaceId
-	userWS.UserId = data.UserId
-	userWS.Email = data.Email
-	userWS.PhoneNumber = data.PhoneNumber
-	userWS.Role = data.Role
+func (h *userWorkspaceHelper) CreateUserWorkspace(ctx context.Context, data *CreateUserWorkspaceParams) (*entity.UserWorkspace, error) {
+	userWorkspace := entity.NewUserWorkspace()
+	userWorkspace.WorkspaceId = data.WorkspaceId
+	userWorkspace.UserId = data.UserId
+	userWorkspace.Email = data.Email
+	userWorkspace.PhoneNumber = data.PhoneNumber
+	userWorkspace.Role = data.Role
 
-	if err := h.postgresRepo.UserWorkspaceRepo.Create(ctx, data.Tx, userWS); err != nil {
+	if err := h.postgresRepo.UserWorkspaceRepo.Create(ctx, data.Tx, userWorkspace); err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}
 
-	return userWS, nil
+	return userWorkspace, nil
 }

@@ -57,13 +57,13 @@ func (s *userWorkspaceService) CreateUserWorkspace(ctx context.Context, data *mo
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}
 
-	userWS := entity.NewUserWorkspace()
-	userWS.Role = entity.ROLE_USER
-	userWS.WorkspaceId = workspacePayload.WorkspaceId
-	userWS.UserId = userId
-	userWS.Email = data.Email
-	userWS.PhoneNumber = data.PhoneNumber
-	if err := s.postgresRepo.UserWorkspaceRepo.Create(ctx, tx, userWS); err != nil {
+	userWorkspace := entity.NewUserWorkspace()
+	userWorkspace.Role = entity.ROLE_USER
+	userWorkspace.WorkspaceId = workspacePayload.WorkspaceId
+	userWorkspace.UserId = userId
+	userWorkspace.Email = data.Email
+	userWorkspace.PhoneNumber = data.PhoneNumber
+	if err := s.postgresRepo.UserWorkspaceRepo.Create(ctx, tx, userWorkspace); err != nil {
 		tx.Rollback()
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}

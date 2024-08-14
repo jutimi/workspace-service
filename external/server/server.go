@@ -12,39 +12,39 @@ import (
 
 	"github.com/google/uuid"
 	grpc_utils "github.com/jutimi/grpc-service/utils"
-	"github.com/jutimi/grpc-service/workspace"
+	grpc_workspace "github.com/jutimi/grpc-service/workspace"
 )
 
 type grpcServer struct {
-	workspace.UnimplementedWorkspaceRouteServer
-	workspace.UnimplementedUserWorkspaceRouteServer
+	grpc_workspace.UnimplementedWorkspaceRouteServer
+	grpc_workspace.UnimplementedUserWorkspaceRouteServer
 
 	postgresRepo postgres_repository.PostgresRepositoryCollections
 	helper       helper.HelperCollections
 }
 
-type WSServer interface {
-	workspace.WorkspaceRouteServer
-	workspace.UserWorkspaceRouteServer
+type WorkspaceServer interface {
+	grpc_workspace.WorkspaceRouteServer
+	grpc_workspace.UserWorkspaceRouteServer
 }
 
 func NewGRPCServer(
 	postgresRepo postgres_repository.PostgresRepositoryCollections,
 	helper helper.HelperCollections,
-) WSServer {
+) WorkspaceServer {
 	return &grpcServer{
 		postgresRepo: postgresRepo,
 		helper:       helper,
 	}
 }
 
-func (s *grpcServer) GetWorkspaceByFilter(ctx context.Context, data *workspace.GetWorkspaceByFilterParams) (*workspace.WorkspaceResponse, error) {
+func (s *grpcServer) GetWorkspaceByFilter(ctx context.Context, data *grpc_workspace.GetWorkspaceByFilterParams) (*grpc_workspace.WorkspaceResponse, error) {
 	customErr := errors.New(errors.ErrCodeInternalServerError)
 	ids := make([]uuid.UUID, 0)
 
 	id, err := utils.ConvertStringToUUID(*data.Id)
 	if err != nil {
-		return &workspace.WorkspaceResponse{
+		return &grpc_workspace.WorkspaceResponse{
 			Success: false,
 			Data:    nil,
 			Error: grpc_utils.FormatErrorResponse(
@@ -56,7 +56,7 @@ func (s *grpcServer) GetWorkspaceByFilter(ctx context.Context, data *workspace.G
 	for _, id := range data.Ids {
 		convertId, err := utils.ConvertStringToUUID(id)
 		if err != nil {
-			return &workspace.WorkspaceResponse{
+			return &grpc_workspace.WorkspaceResponse{
 				Success: false,
 				Data:    nil,
 				Error: grpc_utils.FormatErrorResponse(
@@ -68,14 +68,14 @@ func (s *grpcServer) GetWorkspaceByFilter(ctx context.Context, data *workspace.G
 		ids = append(ids, convertId)
 	}
 
-	ws, err := s.postgresRepo.WorkspaceRepo.FindOneByFilter(ctx, nil, &repository.FindWorkspaceByFilter{
+	workspace, err := s.postgresRepo.WorkspaceRepo.FindOneByFilter(ctx, nil, &repository.FindWorkspaceByFilter{
 		Id:       &id,
 		IsActive: data.IsActive,
 		Ids:      ids,
 	})
 	if err != nil {
 		customErr = errors.New(errors.ErrCodeWorkspaceNotFound)
-		return &workspace.WorkspaceResponse{
+		return &grpc_workspace.WorkspaceResponse{
 			Success: false,
 			Data:    nil,
 			Error: grpc_utils.FormatErrorResponse(
@@ -85,22 +85,22 @@ func (s *grpcServer) GetWorkspaceByFilter(ctx context.Context, data *workspace.G
 		}, nil
 	}
 
-	return &workspace.WorkspaceResponse{
+	return &grpc_workspace.WorkspaceResponse{
 		Success: true,
-		Data: &workspace.WorkspaceDetail{
-			Id:   ws.Id.String(),
-			Name: ws.Name,
+		Data: &grpc_workspace.WorkspaceDetail{
+			Id:   workspace.Id.String(),
+			Name: workspace.Name,
 		},
 		Error: nil,
 	}, nil
 }
 
-func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *workspace.GetUserWorkspaceByFilterParams) (*workspace.UserWorkspaceResponse, error) {
+func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *grpc_workspace.GetUserWorkspaceByFilterParams) (*grpc_workspace.UserWorkspaceResponse, error) {
 	customErr := errors.New(errors.ErrCodeInternalServerError)
 
 	filter, err := convertUserParamsToFilter(data)
 	if err != nil {
-		return &workspace.UserWorkspaceResponse{
+		return &grpc_workspace.UserWorkspaceResponse{
 			Success: false,
 			Data:    nil,
 			Error: grpc_utils.FormatErrorResponse(
@@ -110,10 +110,10 @@ func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *workspa
 		}, nil
 	}
 
-	userWs, err := s.postgresRepo.UserWorkspaceRepo.FindOneByFilter(ctx, nil, filter)
+	userWorkspace, err := s.postgresRepo.UserWorkspaceRepo.FindOneByFilter(ctx, nil, filter)
 	if err != nil {
 		customErr = errors.New(errors.ErrCodeUserWorkspaceNotFound)
-		return &workspace.UserWorkspaceResponse{
+		return &grpc_workspace.UserWorkspaceResponse{
 			Success: false,
 			Data:    nil,
 			Error: grpc_utils.FormatErrorResponse(
@@ -123,29 +123,29 @@ func (s *grpcServer) GetUserWorkspaceByFilter(ctx context.Context, data *workspa
 		}, nil
 	}
 
-	return &workspace.UserWorkspaceResponse{
+	return &grpc_workspace.UserWorkspaceResponse{
 		Success: true,
-		Data: &workspace.UserWorkspaceDetail{
-			Id:          userWs.Id.String(),
-			Name:        userWs.UserWorkspaceDetail.Name,
-			Email:       *userWs.Email,
-			PhoneNumber: *userWs.PhoneNumber,
-			IsActive:    userWs.IsActive,
-			Role:        convertUserWSRole(userWs.Role),
-			WorkspaceId: userWs.WorkspaceId.String(),
-			UserId:      userWs.UserId.String(),
+		Data: &grpc_workspace.UserWorkspaceDetail{
+			Id:          userWorkspace.Id.String(),
+			Name:        userWorkspace.UserWorkspaceDetail.Name,
+			Email:       *userWorkspace.Email,
+			PhoneNumber: *userWorkspace.PhoneNumber,
+			IsActive:    userWorkspace.IsActive,
+			Role:        convertUserWorkspaceRole(userWorkspace.Role),
+			WorkspaceId: userWorkspace.WorkspaceId.String(),
+			UserId:      userWorkspace.UserId.String(),
 		},
 		Error: nil,
 	}, nil
 }
 
-func (s *grpcServer) GetUserWorkspacesByFilter(ctx context.Context, data *workspace.GetUserWorkspaceByFilterParams) (*workspace.UserWorkspacesResponse, error) {
-	var userWSRes []*workspace.UserWorkspaceDetail
+func (s *grpcServer) GetUserWorkspacesByFilter(ctx context.Context, data *grpc_workspace.GetUserWorkspaceByFilterParams) (*grpc_workspace.UserWorkspacesResponse, error) {
+	var userWorkspaceRes []*grpc_workspace.UserWorkspaceDetail
 	customErr := errors.New(errors.ErrCodeInternalServerError)
 
 	filter, err := convertUserParamsToFilter(data)
 	if err != nil {
-		return &workspace.UserWorkspacesResponse{
+		return &grpc_workspace.UserWorkspacesResponse{
 			Success: false,
 			Data:    nil,
 			Error: grpc_utils.FormatErrorResponse(
@@ -155,10 +155,10 @@ func (s *grpcServer) GetUserWorkspacesByFilter(ctx context.Context, data *worksp
 		}, nil
 	}
 
-	userWs, err := s.postgresRepo.UserWorkspaceRepo.FindByFilter(ctx, nil, filter)
+	userWorkspace, err := s.postgresRepo.UserWorkspaceRepo.FindByFilter(ctx, nil, filter)
 	if err != nil {
 		customErr = errors.New(errors.ErrCodeUserWorkspaceNotFound)
-		return &workspace.UserWorkspacesResponse{
+		return &grpc_workspace.UserWorkspacesResponse{
 			Success: false,
 			Data:    nil,
 			Error: grpc_utils.FormatErrorResponse(
@@ -168,28 +168,28 @@ func (s *grpcServer) GetUserWorkspacesByFilter(ctx context.Context, data *worksp
 		}, nil
 	}
 
-	for _, user := range userWs {
-		userWSRes = append(userWSRes, &workspace.UserWorkspaceDetail{
+	for _, user := range userWorkspace {
+		userWorkspaceRes = append(userWorkspaceRes, &grpc_workspace.UserWorkspaceDetail{
 			Id:          user.Id.String(),
 			Name:        user.UserWorkspaceDetail.Name,
 			Email:       *user.Email,
 			PhoneNumber: *user.PhoneNumber,
 			IsActive:    user.IsActive,
-			Role:        convertUserWSRole(user.Role),
+			Role:        convertUserWorkspaceRole(user.Role),
 			WorkspaceId: user.WorkspaceId.String(),
 			UserId:      user.UserId.String(),
 		})
 	}
 
-	return &workspace.UserWorkspacesResponse{
+	return &grpc_workspace.UserWorkspacesResponse{
 		Success: true,
-		Data:    userWSRes,
+		Data:    userWorkspaceRes,
 		Error:   nil,
 	}, nil
 }
 
 // ------------------------ Helper ------------------------
-func convertUserParamsToFilter(data *workspace.GetUserWorkspaceByFilterParams) (*repository.FindUserWorkspaceByFilter, error) {
+func convertUserParamsToFilter(data *grpc_workspace.GetUserWorkspaceByFilterParams) (*repository.FindUserWorkspaceByFilter, error) {
 	var id, workspaceId, userId uuid.UUID
 	var ids, workspaceIds, userIds []uuid.UUID
 	var err error
@@ -261,13 +261,13 @@ func convertUserParamsToFilter(data *workspace.GetUserWorkspaceByFilterParams) (
 	}, nil
 }
 
-func convertUserWSRole(role string) workspace.UserWorkspaceRole {
+func convertUserWorkspaceRole(role string) grpc_workspace.UserWorkspaceRole {
 	switch role {
 	case entity.ROLE_OWNER:
-		return workspace.UserWorkspaceRole_OWNER
+		return grpc_workspace.UserWorkspaceRole_OWNER
 	case entity.ROLE_ADMIN:
-		return workspace.UserWorkspaceRole_ADMIN
+		return grpc_workspace.UserWorkspaceRole_ADMIN
 	default:
-		return workspace.UserWorkspaceRole_USER
+		return grpc_workspace.UserWorkspaceRole_USER
 	}
 }

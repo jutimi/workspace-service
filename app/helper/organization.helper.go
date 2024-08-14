@@ -257,7 +257,7 @@ func (h *organizationHelper) createUserWorkspaceOrganization(
 	}
 
 	// Check user workspace data
-	userWS, err := h.postgresRepo.UserWorkspaceRepo.FindByFilter(ctx, data.Tx, &repository.FindUserWorkspaceByFilter{
+	userWorkspace, err := h.postgresRepo.UserWorkspaceRepo.FindByFilter(ctx, data.Tx, &repository.FindUserWorkspaceByFilter{
 		Ids:      data.UserWorkspaceIds,
 		IsActive: &isActive,
 	})
@@ -271,14 +271,14 @@ func (h *organizationHelper) createUserWorkspaceOrganization(
 		})
 		return errors.New(errors.ErrCodeInternalServerError)
 	}
-	if len(userWS) != len(data.UserWorkspaceIds) {
+	if len(userWorkspace) != len(data.UserWorkspaceIds) {
 		return errors.New(errors.ErrCodeUserWorkspaceNotFound)
 	}
 
 	// Check user workspace in parent organization
 	if data.Organization.ParentOrganizationIds != nil {
 		parentOrganizationIds := h.GetParentIds(*data.Organization.ParentOrganizationIds)
-		existedUserWSOrganization, err := h.postgresRepo.UserWorkspaceOrganizationRepo.FindByFilter(ctx, data.Tx, &repository.FindUserWorkspaceOrganizationFilter{
+		existedUserWorkspaceOrganization, err := h.postgresRepo.UserWorkspaceOrganizationRepo.FindByFilter(ctx, data.Tx, &repository.FindUserWorkspaceOrganizationFilter{
 			UserWorkspaceIds: data.UserWorkspaceIds,
 			OrganizationIds:  parentOrganizationIds,
 			Limit:            &limit,
@@ -287,7 +287,7 @@ func (h *organizationHelper) createUserWorkspaceOrganization(
 		if err != nil {
 			return errors.New(errors.ErrCodeInternalServerError)
 		}
-		if len(existedUserWSOrganization) > 0 {
+		if len(existedUserWorkspaceOrganization) > 0 {
 			return errors.New(errors.ErrCodeUserWorkspaceAlreadyInOrganization)
 		}
 	}
@@ -297,17 +297,17 @@ func (h *organizationHelper) createUserWorkspaceOrganization(
 	if data.LeaderId != nil {
 		leaderIds = h.generateParentIds(ctx, data.LeaderIds, *data.LeaderId)
 	}
-	userWSOrganizations := make([]entity.UserWorkspaceOrganization, 0)
-	for _, userWSId := range data.UserWorkspaceIds {
+	userWorkspaceOrganizations := make([]entity.UserWorkspaceOrganization, 0)
+	for _, userWorkspaceId := range data.UserWorkspaceIds {
 		userWorkspaceOrganization := entity.NewUserWorkspaceOrganization()
 		userWorkspaceOrganization.OrganizationId = data.Organization.Id
 		userWorkspaceOrganization.WorkspaceId = data.Organization.WorkspaceId
-		userWorkspaceOrganization.UserWorkspaceId = userWSId
+		userWorkspaceOrganization.UserWorkspaceId = userWorkspaceId
 		userWorkspaceOrganization.Role = data.Role
 		userWorkspaceOrganization.LeaderIds = &leaderIds
-		userWSOrganizations = append(userWSOrganizations, *userWorkspaceOrganization)
+		userWorkspaceOrganizations = append(userWorkspaceOrganizations, *userWorkspaceOrganization)
 	}
-	if err := h.postgresRepo.UserWorkspaceOrganizationRepo.BulkCreate(ctx, data.Tx, userWSOrganizations); err != nil {
+	if err := h.postgresRepo.UserWorkspaceOrganizationRepo.BulkCreate(ctx, data.Tx, userWorkspaceOrganizations); err != nil {
 		return errors.New(errors.ErrCodeInternalServerError)
 	}
 
@@ -457,18 +457,18 @@ func (h *organizationHelper) validateUpdateOrganization(
 		userWorkspaceIds = append(userWorkspaceIds, subLeader.MemberIds...)
 	}
 
-	userWSOrganizations, err := h.postgresRepo.UserWorkspaceOrganizationRepo.FindByFilter(ctx, nil, &repository.FindUserWorkspaceOrganizationFilter{
+	userWorkspaceOrganizations, err := h.postgresRepo.UserWorkspaceOrganizationRepo.FindByFilter(ctx, nil, &repository.FindUserWorkspaceOrganizationFilter{
 		OrganizationId: &data.Organization.Id,
 	})
 	if err != nil {
 		return errors.New(errors.ErrCodeInternalServerError)
 	}
-	if len(userWSOrganizations) != len(userWorkspaceIds) {
+	if len(userWorkspaceOrganizations) != len(userWorkspaceIds) {
 		return errors.New(errors.ErrCodeOrganizationHasChild)
 	}
 
-	for _, userWSOrganization := range userWSOrganizations {
-		if !utils.IsSliceContain(userWSOrganization.UserWorkspaceId, userWorkspaceIds) {
+	for _, userWorkspaceOrganization := range userWorkspaceOrganizations {
+		if !utils.IsSliceContain(userWorkspaceOrganization.UserWorkspaceId, userWorkspaceIds) {
 			return errors.New(errors.ErrCodeOrganizationHasChild)
 		}
 	}

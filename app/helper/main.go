@@ -6,8 +6,8 @@ import (
 )
 
 type HelperCollections struct {
-	UserWSHelper       UserWSHelper
-	OrganizationHelper OrganizationHelper
+	UserWorkspaceHelper UserWorkspaceHelper
+	OrganizationHelper  OrganizationHelper
 }
 
 func RegisterHelpers(
@@ -15,7 +15,7 @@ func RegisterHelpers(
 	otherRepo other_repository.OtherRepositoryCollections,
 ) HelperCollections {
 	return HelperCollections{
-		UserWSHelper:       NewUserWSHelper(postgresRepo),
-		OrganizationHelper: NewOrganizationHelper(postgresRepo),
+		UserWorkspaceHelper: NewUserWorkspaceHelper(postgresRepo),
+		OrganizationHelper:  NewOrganizationHelper(postgresRepo),
 	}
 }

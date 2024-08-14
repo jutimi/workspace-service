@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type CreateUserWsParams struct {
+type CreateUserWorkspaceParams struct {
 	Tx          *gorm.DB
 	UserId      uuid.UUID
 	WorkspaceId uuid.UUID

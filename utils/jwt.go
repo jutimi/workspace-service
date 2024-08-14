@@ -34,7 +34,7 @@ func ParseUserToken(tokenString string) (*UserPayload, error) {
 }
 
 // Get payload from workspace token
-func ParseWSToken(tokenString string) (*WorkspacePayload, error) {
+func ParseWorkspaceToken(tokenString string) (*WorkspacePayload, error) {
 	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, &WorkspacePayload{})
 	if err != nil {
 		return nil, err

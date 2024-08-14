@@ -57,7 +57,7 @@ func (s *workspaceService) CreateWorkspace(
 	if err != nil {
 		return nil, err
 	}
-	wsOwned, err := s.postgresRepo.UserWorkspaceRepo.CountByFilter(ctx, nil, &repository.FindUserWorkspaceByFilter{
+	workspaceOwned, err := s.postgresRepo.UserWorkspaceRepo.CountByFilter(ctx, nil, &repository.FindUserWorkspaceByFilter{
 		Role:     &role,
 		IsActive: &isActive,
 	})
@@ -71,31 +71,31 @@ func (s *workspaceService) CreateWorkspace(
 		})
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}
-	if wsOwned >= int64(user.Data.GetLimitWorkspace()) {
+	if workspaceOwned >= int64(user.Data.GetLimitWorkspace()) {
 		return nil, errors.New(errors.ErrCodePassedLimitWorkspace)
 	}
 
 	// Begin create workspace
 	tx := database.BeginPostgresTransaction()
-	ws := entity.NewWorkspace()
-	ws.Email = data.Email
-	ws.PhoneNumber = data.PhoneNumber
-	ws.Address = data.Address
-	ws.Name = data.Name
+	workspace := entity.NewWorkspace()
+	workspace.Email = data.Email
+	workspace.PhoneNumber = data.PhoneNumber
+	workspace.Address = data.Address
+	workspace.Name = data.Name
 
 	// Create workspace
-	if err := s.postgresRepo.WorkspaceRepo.Create(ctx, tx, ws); err != nil {
+	if err := s.postgresRepo.WorkspaceRepo.Create(ctx, tx, workspace); err != nil {
 		tx.Rollback()
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}
 	// Create user workspace
-	userWS, err := s.helpers.UserWSHelper.CreateUserWS(ctx, &helper.CreateUserWsParams{
+	userWorkspace, err := s.helpers.UserWorkspaceHelper.CreateUserWorkspace(ctx, &helper.CreateUserWorkspaceParams{
 		Tx:          tx,
 		UserId:      userPayload.Id,
 		Email:       user.Data.Email,
 		PhoneNumber: user.Data.PhoneNumber,
 		Role:        entity.ROLE_OWNER,
-		WorkspaceId: ws.Id,
+		WorkspaceId: workspace.Id,
 	})
 	if err != nil {
 		tx.Rollback()
@@ -104,10 +104,10 @@ func (s *workspaceService) CreateWorkspace(
 	// Create organization
 	if err := s.helpers.OrganizationHelper.CreateOrganization(ctx, &helper.CreateOrganizationParams{
 		Tx:                   tx,
-		WorkspaceId:          ws.Id,
+		WorkspaceId:          workspace.Id,
 		ParentOrganizationId: nil,
 		ParentLeaderId:       nil,
-		LeaderId:             &userWS.Id,
+		LeaderId:             &userWorkspace.Id,
 		Name:                 data.Name,
 		SubLeaders:           nil,
 	}); err != nil {
@@ -130,14 +130,14 @@ func (s *workspaceService) UpdateWorkspace(
 	}
 
 	// Check duplicate workspace name
-	existedWS, err := s.postgresRepo.WorkspaceRepo.FindExistedByFilter(ctx, nil, &repository.FindWorkspaceByFilter{
+	existedWorkspace, err := s.postgresRepo.WorkspaceRepo.FindExistedByFilter(ctx, nil, &repository.FindWorkspaceByFilter{
 		Id:   &workspaceId,
 		Name: &data.Name,
 	})
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)
 	}
-	if len(existedWS) > 0 {
+	if len(existedWorkspace) > 0 {
 		return nil, errors.New(errors.ErrCodeDuplicateWorkspaceName)
 	}
 

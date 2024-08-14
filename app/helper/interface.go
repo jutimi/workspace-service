@@ -9,8 +9,8 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserWSHelper interface {
-	CreateUserWS(ctx context.Context, data *CreateUserWsParams) (*entity.UserWorkspace, error)
+type UserWorkspaceHelper interface {
+	CreateUserWorkspace(ctx context.Context, data *CreateUserWorkspaceParams) (*entity.UserWorkspace, error)
 }
 
 type OrganizationHelper interface {
