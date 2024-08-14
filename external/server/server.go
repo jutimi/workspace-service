@@ -193,8 +193,14 @@ func convertUserParamsToFilter(data *grpc_workspace.GetUserWorkspaceByFilterPara
 	var id, workspaceId, userId uuid.UUID
 	var ids, workspaceIds, userIds []uuid.UUID
 	var err error
-	limit := int(*data.Limit)
-	offset := int(*data.Offset)
+	var limit, offset int
+
+	if data.Limit != nil {
+		limit = int(*data.Limit)
+	}
+	if data.Offset != nil {
+		offset = int(*data.Offset)
+	}
 
 	if data.Id != nil {
 		id, err = utils.ConvertStringToUUID(*data.Id)
