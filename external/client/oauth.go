@@ -8,6 +8,7 @@ import (
 	"workspace-server/package/errors"
 
 	"github.com/jutimi/grpc-service/oauth"
+	"github.com/jutimi/grpc-service/utils"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -46,6 +47,12 @@ func NewOAuthClient() OAuthClient {
 }
 
 func (c *oauthClient) GetUserByFilter(ctx context.Context, data *oauth.GetUserByFilterParams) (*oauth.UserResponse, error) {
+	conf := config.GetConfiguration().Server
+	ctx = utils.GenerateContext(utils.Metadata{
+		Ctx:         ctx,
+		ServiceName: conf.ServiceName,
+	})
+
 	resp, err := c.userClient.GetUserByFilter(ctx, data)
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)
@@ -61,6 +68,12 @@ func (c *oauthClient) GetUserByFilter(ctx context.Context, data *oauth.GetUserBy
 }
 
 func (c *oauthClient) GetUsersByFilter(ctx context.Context, data *oauth.GetUserByFilterParams) (*oauth.UsersResponse, error) {
+	conf := config.GetConfiguration().Server
+	ctx = utils.GenerateContext(utils.Metadata{
+		Ctx:         ctx,
+		ServiceName: conf.ServiceName,
+	})
+
 	resp, err := c.userClient.GetUsersByFilter(ctx, data)
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)
@@ -76,6 +89,12 @@ func (c *oauthClient) GetUsersByFilter(ctx context.Context, data *oauth.GetUserB
 }
 
 func (c *oauthClient) CreateUser(ctx context.Context, data *oauth.CreateUserParams) (*oauth.UserResponse, error) {
+	conf := config.GetConfiguration().Server
+	ctx = utils.GenerateContext(utils.Metadata{
+		Ctx:         ctx,
+		ServiceName: conf.ServiceName,
+	})
+
 	resp, err := c.userClient.CreateUser(ctx, data)
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)
@@ -91,6 +110,12 @@ func (c *oauthClient) CreateUser(ctx context.Context, data *oauth.CreateUserPara
 }
 
 func (c *oauthClient) BulkCreateUsers(ctx context.Context, data *oauth.CreateUsersParams) (*oauth.UsersResponse, error) {
+	conf := config.GetConfiguration().Server
+	ctx = utils.GenerateContext(utils.Metadata{
+		Ctx:         ctx,
+		ServiceName: conf.ServiceName,
+	})
+
 	resp, err := c.userClient.BulkCreateUsers(ctx, data)
 	if err != nil {
 		return nil, errors.New(errors.ErrCodeInternalServerError)

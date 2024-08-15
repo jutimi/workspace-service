@@ -9,7 +9,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.14.0
 	github.com/gosimple/unidecode v1.0.1
-	github.com/jutimi/grpc-service v0.0.0-20240814040647-305183205b77
+	github.com/jutimi/grpc-service v0.0.0-20240814090842-d9dadf8659bc
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.19.0
 	go.opentelemetry.io/otel v1.28.0

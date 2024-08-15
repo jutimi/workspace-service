@@ -8,6 +8,7 @@ import (
 	"workspace-server/app/entity"
 	"workspace-server/app/repository"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -130,7 +131,7 @@ func (r *userWorkspaceOrganizationRepository) buildFilter(
 		query = tx.WithContext(ctx)
 	}
 
-	if filter.Id != nil {
+	if filter.Id != nil && *filter.Id != uuid.Nil {
 		query = query.Scopes(findByString(*filter.Id, "id"))
 	}
 	if filter.Ids != nil && len(filter.Ids) > 0 {

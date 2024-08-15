@@ -8,6 +8,7 @@ import (
 	"workspace-server/app/entity"
 	"workspace-server/app/repository"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -152,7 +153,7 @@ func (r *workspaceRepository) buildFilter(
 	if filter.PhoneNumber != nil && *filter.PhoneNumber != "" {
 		query = query.Scopes(findByText(*filter.PhoneNumber, "phone_number"))
 	}
-	if filter.Id != nil {
+	if filter.Id != nil && *filter.Id != uuid.Nil {
 		query = query.Scopes(findByString(*filter.Id, "id"))
 	}
 	if filter.Ids != nil && len(filter.Ids) > 0 {
@@ -190,7 +191,7 @@ func (r *workspaceRepository) buildExistedFilter(
 	if filter.PhoneNumber != nil && *filter.PhoneNumber != "" {
 		query = query.Scopes(orByText(*filter.PhoneNumber, "phone_number"))
 	}
-	if filter.Id != nil {
+	if filter.Id != nil && *filter.Id != uuid.Nil {
 		query = query.Scopes(excludeByString(*filter.Id, "id"))
 	}
 	if filter.Ids != nil && len(filter.Ids) > 0 {

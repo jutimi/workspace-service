@@ -8,6 +8,7 @@ import (
 	"workspace-server/app/entity"
 	"workspace-server/app/repository"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -143,7 +144,7 @@ func (r *organizationRepository) buildFilter(
 		query = tx.WithContext(ctx)
 	}
 
-	if filter.Id != nil {
+	if filter.Id != nil && *filter.Id != uuid.Nil {
 		query = query.Scopes(findByString(*filter.Id, "id"))
 	}
 	if filter.ParentOrganizationId != nil {
@@ -158,7 +159,7 @@ func (r *organizationRepository) buildFilter(
 	if filter.Limit != nil && filter.Offset != nil {
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
 	}
-	if filter.WorkspaceId != nil {
+	if filter.WorkspaceId != nil && *filter.WorkspaceId != uuid.Nil {
 		query = query.Scopes(findByString(*filter.WorkspaceId, "workspace_id"))
 	}
 	if filter.Level != nil {
@@ -181,7 +182,7 @@ func (r *organizationRepository) buildExistedFilter(
 		query = tx.WithContext(ctx)
 	}
 
-	if filter.Id != nil {
+	if filter.Id != nil && *filter.Id != uuid.Nil {
 		query = query.Scopes(excludeByString(*filter.Id, "id"))
 	}
 	if filter.Ids != nil && len(filter.Ids) > 0 {

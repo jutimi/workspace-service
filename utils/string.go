@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"regexp"
 	"strings"
 
@@ -57,4 +58,12 @@ func ConvertSliceStringToUUID(str []string) ([]uuid.UUID, error) {
 		result = append(result, convertData)
 	}
 	return result, nil
+}
+
+func ConvertStructToString(data interface{}) string {
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return ""
+	}
+	return string(jsonData)
 }

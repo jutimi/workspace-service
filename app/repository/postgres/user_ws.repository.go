@@ -7,6 +7,7 @@ import (
 	"workspace-server/app/entity"
 	"workspace-server/app/repository"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -131,7 +132,7 @@ func (r *userWorkspaceRepository) buildFilter(
 	if filter.PhoneNumber != nil && *filter.PhoneNumber != "" {
 		query = query.Scopes(findByText(*filter.PhoneNumber, "phone_number"))
 	}
-	if filter.Id != nil {
+	if filter.Id != nil && *filter.Id != uuid.Nil {
 		query = query.Scopes(findByString(*filter.Id, "id"))
 	}
 	if filter.Ids != nil && len(filter.Ids) > 0 {
@@ -148,6 +149,21 @@ func (r *userWorkspaceRepository) buildFilter(
 	}
 	if filter.Role != nil {
 		query = query.Scopes(findByString(*filter.Role, "role"))
+	}
+	if filter.WorkspaceId != nil && *filter.WorkspaceId != uuid.Nil {
+		query = query.Scopes(findByString(*filter.WorkspaceId, "workspace_id"))
+	}
+	if filter.WorkspaceIds != nil && len(filter.WorkspaceIds) > 0 {
+		query = query.Scopes(findBySlice(filter.WorkspaceIds, "workspace_id"))
+	}
+	if filter.UserId != nil && *filter.UserId != uuid.Nil {
+		query = query.Scopes(findByString(*filter.UserId, "user_id"))
+	}
+	if filter.UserIds != nil && len(filter.UserIds) > 0 {
+		query = query.Scopes(findBySlice(filter.UserIds, "user_id"))
+	}
+	if filter.IsActive != nil {
+		query = query.Scopes(findByString(*filter.IsActive, "is_active"))
 	}
 
 	// Relation query
