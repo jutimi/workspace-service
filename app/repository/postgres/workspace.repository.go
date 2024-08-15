@@ -148,28 +148,28 @@ func (r *workspaceRepository) buildFilter(
 	}
 
 	if filter.Email != nil && *filter.Email != "" {
-		query = query.Scopes(findByText(*filter.Email, "email"))
+		query = query.Scopes(whereBy(*filter.Email, "email"))
 	}
 	if filter.PhoneNumber != nil && *filter.PhoneNumber != "" {
-		query = query.Scopes(findByText(*filter.PhoneNumber, "phone_number"))
+		query = query.Scopes(whereBy(*filter.PhoneNumber, "phone_number"))
 	}
 	if filter.Id != nil && *filter.Id != uuid.Nil {
-		query = query.Scopes(findByString(*filter.Id, "id"))
+		query = query.Scopes(whereBy(*filter.Id, "id"))
 	}
 	if filter.Ids != nil && len(filter.Ids) > 0 {
-		query = query.Scopes(findBySlice(filter.Ids, "id"))
+		query = query.Scopes(whereBySlice(filter.Ids, "id"))
 	}
 	if filter.Emails != nil && len(filter.Emails) > 0 {
-		query = query.Scopes(findBySlice(filter.Emails, "email"))
+		query = query.Scopes(whereBySlice(filter.Emails, "email"))
 	}
 	if filter.PhoneNumbers != nil && len(filter.PhoneNumbers) > 0 {
-		query = query.Scopes(findBySlice(filter.PhoneNumbers, "phone_number"))
+		query = query.Scopes(whereBySlice(filter.PhoneNumbers, "phone_number"))
 	}
 	if filter.Limit != nil && filter.Offset != nil {
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
 	}
 	if filter.Name != nil {
-		query = query.Scopes(findByName(*filter.Name, "name_slug"))
+		query = query.Scopes(whereByNameSlug(*filter.Name, "name_slug"))
 	}
 
 	return query
@@ -207,7 +207,7 @@ func (r *workspaceRepository) buildExistedFilter(
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
 	}
 	if filter.Name != nil {
-		query = query.Scopes(orByName(*filter.Name, "name_slug"))
+		query = query.Scopes(orByNameSlug(*filter.Name, "name_slug"))
 	}
 
 	return query

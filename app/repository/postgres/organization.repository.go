@@ -145,28 +145,28 @@ func (r *organizationRepository) buildFilter(
 	}
 
 	if filter.Id != nil && *filter.Id != uuid.Nil {
-		query = query.Scopes(findByString(*filter.Id, "id"))
+		query = query.Scopes(whereBy(*filter.Id, "id"))
 	}
 	if filter.ParentOrganizationId != nil {
-		query = query.Scopes(findByString(*filter.ParentOrganizationId, "parent_organization_id"))
+		query = query.Scopes(whereBy(*filter.ParentOrganizationId, "parent_organization_id"))
 	}
 	if filter.Ids != nil && len(filter.Ids) > 0 {
-		query = query.Scopes(findBySlice(filter.Ids, "id"))
+		query = query.Scopes(whereBySlice(filter.Ids, "id"))
 	}
 	if filter.Name != nil {
-		query = query.Scopes(findByName(*filter.Name, "name_slug"))
+		query = query.Scopes(whereByNameSlug(*filter.Name, "name_slug"))
 	}
 	if filter.Limit != nil && filter.Offset != nil {
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
 	}
 	if filter.WorkspaceId != nil && *filter.WorkspaceId != uuid.Nil {
-		query = query.Scopes(findByString(*filter.WorkspaceId, "workspace_id"))
+		query = query.Scopes(whereBy(*filter.WorkspaceId, "workspace_id"))
 	}
 	if filter.Level != nil {
-		query = query.Scopes(findByString(*filter.Level, "level"))
+		query = query.Scopes(whereBy(*filter.Level, "level"))
 	}
 	if filter.ParentOrganizationIdsStr != nil && len(*filter.ParentOrganizationIdsStr) > 0 {
-		query = query.Scopes(findByText(*filter.ParentOrganizationIdsStr, "parent_organization_ids"))
+		query = query.Scopes(whereByText(*filter.ParentOrganizationIdsStr, "parent_organization_ids"))
 	}
 
 	return query
@@ -192,7 +192,7 @@ func (r *organizationRepository) buildExistedFilter(
 		query = query.Scopes(paginate(*filter.Limit, *filter.Offset))
 	}
 	if filter.Name != nil {
-		query = query.Scopes(orByName(*filter.Name, "name_slug"))
+		query = query.Scopes(orByNameSlug(*filter.Name, "name_slug"))
 	}
 
 	return query
